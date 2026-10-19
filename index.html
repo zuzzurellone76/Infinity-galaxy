@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#080e1c">
-  <meta name="app-version" content="1.3.0">
+  <meta name="app-version" content="1.4.0">
   <meta name="description" content="Frontiera Infinita: un gioco gestionale e strategico spaziale, gratuito e giocabile direttamente nel browser. Espandi la tua civiltà in un universo generato senza fine.">
   <title>Frontiera Infinita — Gioco strategico gestionale</title>
   <style>
@@ -62,6 +62,9 @@
     .tech-scroll{overflow-x:auto;margin-top:16px;scrollbar-color:#3d6276 #111c31}.tech-tree{min-width:840px;display:grid;grid-template-columns:repeat(5,minmax(145px,1fr));column-gap:9px;position:relative;padding:18px 12px 15px;border-radius:13px;background:radial-gradient(circle at 20% 45%,#1c34463b,transparent 55%),#0a1629}.tech-links{position:absolute;inset:0;pointer-events:none;width:100%;height:100%;z-index:0}.tech-col{display:flex;flex-direction:column;align-items:center;justify-content:space-around;gap:19px;position:relative;z-index:1}.hex-node{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;position:relative;width:117px;height:108px;border:0;padding:9px 18px;clip-path:polygon(25% 4%,75% 4%,100% 50%,75% 96%,25% 96%,0 50%);background:#28445a;color:#e9faff;text-shadow:0 1px 2px #0009;transition:filter .2s,transform .2s}.hex-node:before{content:'';position:absolute;inset:4px;clip-path:inherit;background:#152d42;z-index:-1}.hex-node.open{background:#45d9c4}.hex-node.open:before{background:#164342}.hex-node.locked{background:#45536a;color:#96a6bb;filter:saturate(.42)}.hex-node.locked:before{background:#182333}.hex-node.selected{outline:none;filter:drop-shadow(0 0 8px #67f0db);transform:scale(1.08)}.hex-icon{font-size:19px;line-height:1}.hex-level{font-size:25px;font-weight:900;line-height:1}.hex-name{font-size:10px;line-height:1.12;max-width:86px;text-align:center;font-weight:750}.tech-detail{border:1px solid #37526e;border-radius:13px;background:#101e33;padding:16px;margin-top:16px}.tech-detail h3{margin:0 0 7px}.tech-detail p{color:var(--muted);line-height:1.6;font-size:12px}.tech-detail .btn{margin-top:12px}
     .tech-scroll-hint{display:none;color:#95bad0;font-size:12px;margin:8px 0 0}
     @media(max-width:760px){.tech-scroll-hint{display:block}.auto-grid{grid-template-columns:1fr}.fleet-form{grid-template-columns:1fr}.fleet-form .full-row{grid-column:1}.tech-tree{min-width:790px}.tech-detail{position:relative}.hex-node{width:109px;height:100px}}
+    /* Galassia viva · v1.4 */
+    .resource-grid{grid-template-columns:repeat(6,minmax(0,1fr))}.tile.alien-sector{border-color:#dba0ff;background:#3b234aa8}.tile.empty-sector{opacity:.76;border-style:dashed}.civ-layout{grid-template-columns:minmax(0,1fr) minmax(280px,.95fr)}.civ-grid,.chronicle-list{display:grid;gap:11px;max-height:650px;overflow:auto}.civ-card,.chronicle-event{border:1px solid var(--line);padding:14px;border-radius:13px;background:#182840}.civ-card h3{margin:0 0 8px;font-size:15px}.civ-card p,.chronicle-event p{color:var(--muted);font-size:12px;line-height:1.55;margin:7px 0}.civ-card .facts{display:flex;flex-wrap:wrap;gap:5px;margin:10px 0}.chronicle-event{display:flex;align-items:flex-start;gap:10px}.chronicle-event .event-icon{font-size:22px}.chronicle-event b{display:block;font-size:12px}.chronicle-event time{font-size:10px;color:var(--muted)}.chronicle-event p{margin:4px 0}.event-muted{opacity:.58}.chronicle-empty{color:var(--muted);font-size:12px;line-height:1.7;padding:12px;border:1px dashed var(--line);border-radius:12px}.section-gap{margin-top:17px}
+    @media(max-width:1150px){.resource-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}@media(max-width:740px){.resource-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.civ-layout{grid-template-columns:1fr}}@media(max-width:390px){.resource-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
   </style>
 </head>
 <body>
@@ -70,6 +73,7 @@
     <div class="brand"><div class="brand-icon">✧</div><div><b>FRONTIERA</b><small>INFINITA ∞</small></div></div>
     <nav aria-label="Sezioni del gioco"><div class="nav-hint">Centro di comando</div><div class="nav-links">
       <button class="nav-btn active" data-view="galaxy"><span class="nav-ico">◈</span>Galassia</button>
+      <button class="nav-btn" data-view="civs"><span class="nav-ico">🪐</span>Civiltà</button>
       <button class="nav-btn" data-view="fleet"><span class="nav-ico">🚀</span>Flotte</button>
       <button class="nav-btn" data-view="research"><span class="nav-ico">⚗</span>Ricerca</button>
       <button class="nav-btn" data-view="market"><span class="nav-ico">⇄</span>Mercato</button>
@@ -87,8 +91,12 @@
         <aside class="stack"><section class="panel panel-pad" id="detail-panel" aria-label="Dettagli del settore"></section><section class="panel panel-pad" id="empire-panel"></section></aside></div>
       <div class="bottom-grid"><section class="panel panel-pad" id="objective-panel"></section><section class="panel panel-pad"><div class="panel-head"><h2>◷ Ultimi avvenimenti</h2><button class="btn tiny ghost" data-view="history">Vedi tutti ↗</button></div><div class="activity-list" id="recent-log"></div></section></div>
     </div>
+    <section class="view" id="view-civs" hidden>
+      <section class="panel panel-pad"><h2 class="wide-heading">🪐 Osservatorio galattico</h2><p class="subtitle">Le civiltà nascono, crescono, commerciano, si affrontano e possono scomparire. I loro territori vengono rivelati esplorando: gli imperi sconosciuti non sono mostrati in anticipo.</p><div id="civ-overview" class="fleet-summary"></div></section>
+      <div class="bottom-grid section-gap civ-layout"><section class="panel panel-pad"><div class="panel-head"><h2>🌐 Civiltà conosciute</h2><span class="tag">Simulazione autonoma</span></div><div id="civilizations-list" class="civ-grid"></div></section><section class="panel panel-pad"><div class="panel-head"><h2>📜 Cronache galattiche</h2><select id="chronicle-filter" aria-label="Filtra cronache"><option value="all">Tutti gli eventi</option><option value="birth">Nascite</option><option value="growth">Espansioni</option><option value="peace">Commercio e alleanze</option><option value="war">Guerre</option><option value="extinct">Estinzioni</option></select></div><div id="galactic-chronicle" class="chronicle-list"></div></section></div>
+    </section>
     <section class="view" id="view-fleet" hidden>
-      <div class="panel panel-pad"><h2 class="wide-heading">🚀 Comando Flotte · v1.3</h2><p class="subtitle">Organizza navi individuali, forma squadre e programma rotte. Le opzioni sono sbloccate dall'albero di ricerca.</p><div id="fleet-summary"></div></div>
+      <div class="panel panel-pad"><h2 class="wide-heading">🚀 Comando Flotte · v1.4</h2><p class="subtitle">Organizza navi individuali, forma squadre e programma rotte. Le opzioni sono sbloccate dall'albero di ricerca.</p><div id="fleet-summary"></div></div>
       <section class="panel panel-pad section-gap"><h2 class="wide-heading">🛰️ Formazioni e rotte multipianeta</h2><div id="fleets-manager"></div></section>
       <section class="panel panel-pad section-gap"><h2 class="wide-heading">🤖 Centro automazioni</h2><div id="automation-manager"></div></section>
       <div class="bottom-grid fleet-layout section-gap"><section class="panel panel-pad"><h2 class="wide-heading">◈ Hangar e schieramenti</h2>
@@ -100,7 +108,7 @@
     <section class="view" id="view-research" hidden><div class="panel panel-pad"><h2 class="wide-heading">⬡ Albero delle tecnologie</h2><p class="subtitle">Ogni esagono rappresenta una tecnologia: il numero indica il livello raggiunto. Le linee mostrano i prerequisiti; un esagono bloccato diventa attivo soltanto quando tutti i genitori raggiungono il livello richiesto.</p><p class="tech-scroll-hint">↔ Scorri orizzontalmente per esplorare tutti i rami della ricerca</p><div class="tech-scroll"><div id="tech-tree" class="tech-tree"></div></div><div id="tech-detail" class="tech-detail"></div></div></section>
     <section class="view" id="view-market" hidden><div class="panel panel-pad" style="margin-bottom:16px"><h2 class="wide-heading">⇄ Scambi interstellari</h2><p class="subtitle">Usa i crediti per superare le carenze temporanee. Le transazioni sono immediate e non richiedono cicli.</p></div><div class="market-grid" id="market-grid"></div></section>
     <section class="view" id="view-history" hidden><div class="panel panel-pad"><div class="panel-head"><div><h2 class="wide-heading">▤ Registro di bordo</h2><p class="subtitle">Espansioni, crisi e progressi della tua civiltà.</p></div><button class="btn tiny" id="backup-log">Esporta salvataggio</button></div><div class="log-all" id="log-all"></div></div></section>
-    <div class="footer"><span>FRONTIERA INFINITA · versione 1.3.0 · <strong>100% gratuito</strong></span><span>Nessun server · dati salvati su questo dispositivo</span></div>
+    <div class="footer"><span>FRONTIERA INFINITA · versione 1.4.0 · <strong>100% gratuito</strong></span><span>Nessun server · dati salvati su questo dispositivo</span></div>
   </main>
 </div>
 <div id="toast" class="toast" role="status" aria-live="polite"></div>
@@ -119,9 +127,13 @@
     trade:{name:'Crocevia mercantile',icon:'💠',description:'Scali interstellari affollati, ideali per generare crediti commerciali.',base:{energy:0,metal:.3,food:0,science:.5,credits:5.3}},
     ice:{name:'Pianeta glaciale',icon:'❄️',description:'Calotte di ghiaccio e flussi geotermici. Una colonia energetica di supporto.',base:{energy:3.5,metal:.5,food:1.7,science:0,credits:0}},
     storm:{name:'Nebulosa instabile',icon:'🌀',description:'Regione pericolosa ma ricca di impulsi elettromagnetici e anomalie.',base:{energy:2.4,metal:0,food:0,science:2.0,credits:.2}},
-    void:{name:'Pianeta desolato',icon:'🌑',description:'Ambiente ostile. Produce lentamente più tipi di risorse, ma è difficile da difendere.',base:{energy:1.0,metal:1.8,food:.6,science:.8,credits:.8}}
+    void:{name:'Pianeta desolato',icon:'🌑',description:'Ambiente ostile. Produce lentamente più tipi di risorse, ma è difficile da difendere.',base:{energy:1.0,metal:1.8,food:.6,science:.8,credits:.8}},
+    empty:{name:'Spazio vuoto',icon:'·',description:'Nessun pianeta colonizzabile. È attraversabile dalle flotte; con la tecnologia adatta puoi installare un avamposto orbitale.',base:{energy:0,metal:0,food:0,science:.65,credits:.6}},
+    asteroid:{name:'Cintura di asteroidi',icon:'☄️',description:'Enormi giacimenti rocciosi. Alta resa mineraria, insediamento limitato.',base:{energy:.6,metal:5.0,food:0,science:.55,credits:.4}},
+    toxic:{name:'Pianeta corrosivo',icon:'☣️',description:'Radiazioni e atmosfera pericolosa. Richiede esogeologia prima della colonizzazione.',base:{energy:1.1,metal:3.3,food:0,science:1.5,credits:.4}},
+    relic:{name:'Sito archeologico',icon:'🗿',description:'Resti di una civiltà scomparsa. Potrebbe contenere dati e manufatti unici.',base:{energy:.2,metal:.5,food:0,science:4.1,credits:.3,relics:.08}}
   };
-  const RESOURCE={energy:{name:'Energia',icon:'⚡'},metal:{name:'Metallo',icon:'⬡'},food:{name:'Cibo',icon:'🌾'},science:{name:'Ricerca',icon:'🧬'},credits:{name:'Crediti',icon:'◈'}};
+  const RESOURCE={energy:{name:'Energia',icon:'⚡'},metal:{name:'Metallo',icon:'⬡'},food:{name:'Cibo',icon:'🌾'},science:{name:'Ricerca',icon:'🧬'},credits:{name:'Crediti',icon:'◈'},relics:{name:'Reperti',icon:'✦'}};
   const TECH={
     industry:{name:'Industria avanzata',icon:'⚙️',description:'Incrementa produzione di metallo (+16% per livello) ed energia (+8% per livello).',short:'Metallo +16% · Energia +8%'},
     biology:{name:'Biosistemi',icon:'🌱',description:'Aumenta la produzione di cibo (+15% per livello) e la capacità abitativa (+6).',short:'Cibo +15% · Capienza +6'},
@@ -136,7 +148,11 @@
     fleetCommand:{name:'Comando flotte',icon:'🚀',description:'Permette di creare formazioni persistenti e coordinarle dalla plancia navale.',short:'Formazioni · +2 unità per livello'},
     patrolNetwork:{name:'Rete di pattuglia',icon:'🔁',description:'Le flotte pattugliano rotte cicliche fra più colonie, proteggendole contemporaneamente.',short:'Rotte · +1 colonia per livello'},
     autopilot:{name:'Autopilota strategico',icon:'🤖',description:'Sblocca ordini ricorrenti di esplorazione con obiettivi quantitativi.',short:'Esplorazione automatica'},
-    envoy:{name:'Coordinamento industriale',icon:'🛰️',description:'Sblocca la nave Ambasciatrice che aggiorna progressivamente le miniere in più colonie.',short:'Potenziamenti automatici'}
+    envoy:{name:'Coordinamento industriale',icon:'🛰️',description:'Sblocca la nave Ambasciatrice che aggiorna progressivamente le miniere in più colonie.',short:'Potenziamenti automatici'},
+    geo:{name:'Esogeologia',icon:'🪨',description:'Permette di colonizzare ambienti estremi e aumenta la resa dei giacimenti ostili.',short:'Mondi ostili · Minerali +8%'},
+    xeno:{name:'Xenobiologia',icon:'🧫',description:'Consente di comprendere gli ecosistemi alieni; accresce la produttività dei mondi fertili.',short:'Mondi fertili · Studi alieni'},
+    archaeology:{name:'Archeologia stellare',icon:'🔎',description:'Sblocca l’analisi delle anomalie spaziali e il recupero di reperti.',short:'Analisi anomalie · Reperti'},
+    outposts:{name:'Ingegneria orbitale',icon:'🛰️',description:'Consente di costruire avamposti nei settori vuoti, estendendo le rotte e la frontiera esplorabile.',short:'Avamposti nei settori vuoti'}
   };
   const SHIPS={
     scout:{name:'Sonda esploratrice',icon:'➤',roles:['explore'],unlock:{},speed:1.25,power:0,description:'Ricognizione dei sistemi ignoti. Ritorna alla base.',cost:{metal:28,energy:18,credits:18}},
@@ -150,9 +166,9 @@
   };
   const ROLES={explore:'Esplorazione',defend:'Difesa',patrol:'Pattuglia',attack:'Assalto',research:'Ricerca',return:'Rientro',upgrade:'Potenziamento miniere'};
   // Prerequisiti: il nodo figlio si attiva quando TUTTI i genitori raggiungono il livello richiesto.
-  const PREREQ={industry:{},biology:{},quantum:{},defense:{},shipyard:{industry:1},propulsion:{quantum:1},sensors:{quantum:1},weapons:{shipyard:1,defense:1},tactics:{defense:1,shipyard:1},mining:{industry:1},fleetCommand:{shipyard:2,tactics:1},patrolNetwork:{fleetCommand:1,tactics:2},autopilot:{sensors:2,propulsion:1},envoy:{mining:2,autopilot:1,shipyard:1}};
-  const TECH_COLUMNS=[['industry','biology','quantum','defense'],['shipyard','mining','sensors','propulsion'],['weapons','tactics','autopilot'],['fleetCommand','envoy'],['patrolNetwork']];
-  const APP_VERSION='1.3.0', SAVE_SCHEMA=2;
+  const PREREQ={industry:{},biology:{},quantum:{},defense:{},shipyard:{industry:1},propulsion:{quantum:1},sensors:{quantum:1},weapons:{shipyard:1,defense:1},tactics:{defense:1,shipyard:1},mining:{industry:1},fleetCommand:{shipyard:2,tactics:1},patrolNetwork:{fleetCommand:1,tactics:2},autopilot:{sensors:2,propulsion:1},envoy:{mining:2,autopilot:1,shipyard:1},geo:{industry:1,sensors:1},xeno:{biology:1,sensors:1},archaeology:{quantum:2,sensors:1},outposts:{geo:1,shipyard:1}};
+  const TECH_COLUMNS=[['industry','biology','quantum','defense'],['shipyard','mining','sensors','propulsion'],['weapons','tactics','autopilot'],['fleetCommand','envoy'],['patrolNetwork','geo','xeno'],['archaeology','outposts']];
+  const APP_VERSION='1.4.0', SAVE_SCHEMA=3;
   const TRADES=[
     {id:'food',icon:'🌾',title:'Rifornimenti alimentari',desc:'Compra scorte per sostenere la crescita della popolazione.',cost:{credits:28},give:{food:50}},
     {id:'metal',icon:'⬡',title:'Metallo industriale',desc:'Importa metallo per espandere le colonie e costruire difese.',cost:{credits:34},give:{metal:46}},
@@ -179,11 +195,11 @@
   let selectedTech='industry';
   const ui={fleetFilter:'all',fleetType:'all',fleetQuery:'',selectedShips:[],fleetName:'',openGroups:[],routeDraft:[],routeQuery:'',autoExploreCount:10,autoExploreShip:'',autoMineLevel:1,autoMineShip:''};
   function initialState(){
-    return {version:SAVE_SCHEMA,seed:Math.floor(Math.random()*2000000000),cycle:1,paused:false,speed:1,resources:{energy:160,metal:125,food:150,science:24,credits:120},population:12,morale:86,tech:{industry:0,biology:0,quantum:0,defense:0,shipyard:0,propulsion:0,sensors:0,weapons:0,tactics:0,mining:0,fleetCommand:0,patrolNetwork:0,autopilot:0,envoy:0},ships:[{id:1,type:'scout',location:'0,0',assignment:null},{id:2,type:'interceptor',location:'0,0',assignment:null}],nextShipId:3,nextFleetId:1,missions:[],fleetTrips:[],fleets:[],automations:{explore:null,mining:null},threats:[],sectors:{'0,0':{x:0,y:0,type:'nexus',discovered:true,owned:true,level:1,shield:1}},focus:'0,0',panX:0,panY:0,objectiveStage:0,view:'galaxy',log:[{cycle:1,icon:'🚀',title:'Una nuova civiltà',text:'La tua capitale è operativa. Esplora i settori adiacenti e costruisci un impero senza confini.'}]};
+    return {version:SAVE_SCHEMA,seed:Math.floor(Math.random()*2000000000),cycle:1,paused:false,speed:1,resources:{energy:160,metal:125,food:150,science:24,credits:120,relics:0},population:12,morale:86,tech:{industry:0,biology:0,quantum:0,defense:0,shipyard:0,propulsion:0,sensors:0,weapons:0,tactics:0,mining:0,fleetCommand:0,patrolNetwork:0,autopilot:0,envoy:0,geo:0,xeno:0,archaeology:0,outposts:0},ships:[{id:1,type:'scout',location:'0,0',assignment:null},{id:2,type:'interceptor',location:'0,0',assignment:null}],nextShipId:3,nextFleetId:1,missions:[],fleetTrips:[],fleets:[],automations:{explore:null,mining:null},threats:[],civilizations:[],nextCivId:1,civStarted:false,chronicle:[],chronicleFilter:'all',civArchives:[],ruins:[],sectors:{'0,0':{x:0,y:0,type:'nexus',discovered:true,owned:true,level:1,shield:1}},focus:'0,0',panX:0,panY:0,objectiveStage:0,view:'galaxy',log:[{cycle:1,icon:'🚀',title:'Una nuova civiltà',text:'La tua capitale è operativa. Esplora i settori adiacenti e costruisci un impero senza confini.'}]};
   }
   function validSave(s){
-    if(!s||![1,SAVE_SCHEMA].includes(s.version)||!Number.isSafeInteger(s.seed)||!s.resources||!s.tech||!s.sectors||!s.sectors['0,0']||!Array.isArray(s.log)||s.log.length>85)return false;
-    if(!Object.keys(RESOURCE).every(k=>Number.isFinite(s.resources[k])&&s.resources[k]>=0))return false;
+    if(!s||![1,2,SAVE_SCHEMA].includes(s.version)||!Number.isSafeInteger(s.seed)||!s.resources||!s.tech||!s.sectors||!s.sectors['0,0']||!Array.isArray(s.log)||s.log.length>85)return false;
+    if(!Object.keys(RESOURCE).filter(k=>k!=='relics'||s.version===SAVE_SCHEMA).every(k=>Number.isFinite(s.resources[k])&&s.resources[k]>=0))return false;
     if(!['industry','biology','quantum','defense'].every(k=>Number.isSafeInteger(s.tech[k])&&s.tech[k]>=0&&s.tech[k]<10000))return false;
     if(!Object.keys(TECH).filter(k=>!['industry','biology','quantum','defense'].includes(k)).every(k=>s.tech[k]===undefined||(Number.isSafeInteger(s.tech[k])&&s.tech[k]>=0&&s.tech[k]<10000)))return false;
     if(s.ships!==undefined&&(!Array.isArray(s.ships)||s.ships.length>300||!s.ships.every(x=>x&&Number.isSafeInteger(x.id)&&x.id>0&&SHIPS[x.type]&&typeof x.location==='string'&&/^[-\d]+,[-\d]+$/.test(x.location)&&[null,'defend','patrol'].includes(x.assignment??null))))return false;
@@ -194,6 +210,10 @@
     if(!Object.entries(s.sectors).every(([k,v])=>v&&Number.isSafeInteger(v.x)&&Number.isSafeInteger(v.y)&&Math.abs(v.x)<=1000000&&Math.abs(v.y)<=1000000&&k===key(v.x,v.y)&&Object.hasOwn(KINDS,v.type)&&typeof v.discovered==='boolean'&&typeof v.owned==='boolean'&&Number.isSafeInteger(v.level)&&v.level>=0&&v.level<=50&&Number.isSafeInteger(v.shield)&&v.shield>=0&&v.shield<=40&&(v.mineLevel===undefined||(Number.isSafeInteger(v.mineLevel)&&v.mineLevel>=0&&v.mineLevel<=50))))return false;
     if(s.fleets!==undefined&&(!Array.isArray(s.fleets)||s.fleets.length>70||!s.fleets.every(f=>f&&Number.isSafeInteger(f.id)&&Array.isArray(f.shipIds)&&f.shipIds.length<=60&&f.shipIds.every(Number.isSafeInteger)&&typeof f.name==='string'&&f.name.length<=35&&typeof f.location==='string'&&/^[-\d]+,[-\d]+$/.test(f.location)&&['idle','patrol','defend','attack'].includes(f.mode)&&Array.isArray(f.route)&&f.route.length<=30)))return false;
     if(s.fleetTrips!==undefined&&(!Array.isArray(s.fleetTrips)||s.fleetTrips.length>70||!s.fleetTrips.every(t=>t&&Number.isSafeInteger(t.fleetId)&&typeof t.from==='string'&&typeof t.to==='string'&&Number.isSafeInteger(t.startCycle)&&Number.isSafeInteger(t.endCycle))))return false;
+    if(s.civilizations!==undefined&&(!Array.isArray(s.civilizations)||s.civilizations.length>65||!s.civilizations.every(c=>c&&Number.isSafeInteger(c.id)&&typeof c.name==='string'&&c.name.length<60&&Array.isArray(c.worlds)&&c.worlds.length<=50&&c.worlds.every(k=>typeof k==='string'&&/^-?\d+,-?\d+$/.test(k))&&['rising','active','extinct'].includes(c.status))))return false;
+    if(s.chronicle!==undefined&&(!Array.isArray(s.chronicle)||s.chronicle.length>165||!s.chronicle.every(e=>e&&Number.isSafeInteger(e.cycle)&&typeof e.text==='string'&&e.text.length<650)))return false;
+    if(s.ruins!==undefined&&(!Array.isArray(s.ruins)||s.ruins.length>260||!s.ruins.every(r=>r&&typeof r.at==='string'&&/^-?\d+,-?\d+$/.test(r.at)&&typeof r.name==='string'&&r.name.length<70)))return false;
+    if(s.civArchives!==undefined&&(!Array.isArray(s.civArchives)||s.civArchives.length>250))return false;
     if(!s.sectors['0,0'].owned||s.sectors['0,0'].type!=='nexus'||!s.sectors['0,0'].discovered)return false;
     return s.log.every(l=>l&&typeof l.title==='string'&&typeof l.text==='string'&&typeof l.icon==='string'&&Number.isSafeInteger(l.cycle));
   }
@@ -203,6 +223,14 @@
     if(!Array.isArray(state.ships))state.ships=[{id:1,type:'scout',location:'0,0',assignment:null},{id:2,type:'interceptor',location:'0,0',assignment:null}];
     if(!Array.isArray(state.missions))state.missions=[];
     if(!Array.isArray(state.threats))state.threats=[];
+    if(!Number.isFinite(state.resources.relics))state.resources.relics=0;
+    if(!Array.isArray(state.civilizations))state.civilizations=[];
+    if(!Array.isArray(state.chronicle))state.chronicle=[];
+    if(!Array.isArray(state.ruins))state.ruins=[];
+    if(!Array.isArray(state.civArchives))state.civArchives=[];
+    if(!Number.isSafeInteger(state.nextCivId))state.nextCivId=Math.max(0,...state.civilizations.map(c=>c.id))+1;
+    if(typeof state.civStarted!=='boolean')state.civStarted=false;
+    if(!['all','birth','growth','peace','war','extinct'].includes(state.chronicleFilter))state.chronicleFilter='all';
     if(!Array.isArray(state.fleets))state.fleets=[];
     if(!Array.isArray(state.fleetTrips))state.fleetTrips=[];
     if(!state.automations||typeof state.automations!=='object')state.automations={explore:null,mining:null};
@@ -219,7 +247,120 @@
   migrateSave();
   function save(){try{localStorage.setItem(STORE,JSON.stringify(state))}catch(e){}}
   function hash(x,y,seed=state.seed){let a=Math.imul(x|0,374761393)+Math.imul(y|0,668265263)+seed|0;a=Math.imul(a^(a>>>13),1274126177);return (a^(a>>>16))>>>0}
-  function generatedSector(x,y){const h=hash(x,y);let types=['solar','metal','garden','archive','trade','ice','storm','void'];return {x,y,type:types[h%types.length],discovered:false,owned:false,level:0,shield:0,mineLevel:0}}
+  // Un settore conserva il tipo precedente se era già stato scoperto in una partita 1.3.
+  function sectorProfile(s){
+    const h=hash(s.x,s.y,state.seed+8771)%100;
+    if(ruinAt(key(s.x,s.y)))return {zone:'anomaly',label:'Rovine stellari'};
+    if(s.type==='nexus')return {zone:'favorable',label:'Favorevole'};
+    if(s.type==='empty')return {zone:'empty',label:'Spazio vuoto'};
+    if(['storm','toxic','void'].includes(s.type))return {zone:'hostile',label:'Ambiente ostile'};
+    if(['relic','archive'].includes(s.type)||h>=94)return {zone:'anomaly',label:'Anomalia'};
+    if(['garden','metal','asteroid','trade'].includes(s.type)&&h<60||h<18)return {zone:'favorable',label:'Favorevole'};
+    return {zone:'normal',label:'Standard'};
+  }
+  const CIV_NAMES=['Vhoriani','Consorzio Khar','Lega di Auralis','Clani di Zeron','Custodi di Myrr','Collettivo Irian','Unione Tariel','Dinastia Velkor','Federazione Sia','Nexari Erranti','Sovranità Arken','Enclave Lumnos'];
+  const DISPOSITIONS=['commerciante','scientifica','militarista','espansionista','pacifica'];
+  function alienAt(k){return state.civilizations?.find(c=>c.status!=='extinct'&&c.worlds.includes(k))||null}
+  function ruinAt(k){return (state.ruins||[]).find(r=>r.at===k)||null}
+  function extinction(c,reason){if(c.status==='extinct')return;c.status='extinct';c.worlds=[];c.fleet=0;const world=sector(...coords(c.capital));if(!state.sectors[c.capital]?.owned&&!alienAt(c.capital)&&!state.ruins.some(r=>r.at===c.capital)){state.ruins.unshift({at:c.capital,name:c.name,cycle:state.cycle});state.ruins=state.ruins.slice(0,250)}chronicleEvent('extinct','💀',`${c.name} si estinguono: ${reason}. Le loro rovine restano nella galassia.`,false,[c.id])}
+  function chronicleEvent(kind,icon,description,player=false,knownIds=[]){
+    const event={cycle:state.cycle,kind,icon,text:description,public:!!player,parties:knownIds};
+    state.chronicle.unshift(event);state.chronicle=state.chronicle.slice(0,150);
+    if(player||knownIds.some(id=>state.civilizations.find(c=>c.id===id)?.contacted))log(icon,'Cronache galattiche',description);
+  }
+  function eligibleCivHome(x,y){const k=key(x,y),s=sector(x,y);return !(x===0&&y===0)&&!['empty','nexus'].includes(s.type)&&!state.sectors[k]?.owned&&!alienAt(k)&&!ruinAt(k)}
+  function spawnCivilization(emerging=false){
+    if(state.civilizations.filter(c=>c.status!=='extinct').length>=14)return false;
+    // Le civiltà estinte più antiche entrano nell'archivio, per consentire nuove nascite senza limite di epoche.
+    if(state.civilizations.length>=52){const archived=state.civilizations.filter(c=>c.status==='extinct').slice(0,18);for(const old of archived){state.civArchives.push({id:old.id,name:old.name,born:old.born,extinctAt:state.cycle});state.civilizations=state.civilizations.filter(c=>c!==old)}state.civArchives=state.civArchives.slice(-200)}
+    for(let attempt=0;attempt<70;attempt++){
+      const id=state.nextCivId,angle=hash(id,attempt,state.seed+911)%4,radius=5+Math.min(16,Math.floor(state.cycle/170))+hash(id,attempt,state.seed+78)%8;
+      let x=(angle===0?radius:angle===1?-radius:Math.round(radius/2))+(hash(attempt,id,888)%5)-2;
+      let y=(angle===2?radius:angle===3?-radius:Math.round(radius/2))+(hash(attempt,id,711)%5)-2;
+      const neighbors=state.civilizations.filter(c=>c.status!=='extinct'&&c.worlds.length);
+      if(emerging&&neighbors.length&&attempt%3!==2){const c=neighbors[hash(id,attempt,state.seed+59)%neighbors.length],[ax,ay]=coords(c.capital);x=ax+(hash(id,attempt,state.seed+67)%9)-4;y=ay+(hash(id,attempt,state.seed+83)%9)-4}
+      if(Math.abs(x)+Math.abs(y)<5||!eligibleCivHome(x,y))continue;
+      const name=CIV_NAMES[(id-1)%CIV_NAMES.length]+(id>12?' '+Math.ceil(id/12):'');
+      const faction={id,name,disposition:DISPOSITIONS[hash(id,0,state.seed)%5],status:emerging?'rising':'active',worlds:[key(x,y)],capital:key(x,y),tech:emerging?0:1,population:emerging?7:16,treasury:emerging?120:195,fleet:emerging?4:16,stability:80,contacted:false,born:state.cycle,battles:0,relations:{}};
+      state.civilizations.push(faction);state.nextCivId++;
+      chronicleEvent('birth','🌱',`${name} ${emerging?'emerge sul pianeta '+systemName(sector(x,y)):'fondano il loro primo dominio stellare'}.`,false,[id]);
+      discoverAlienAt(sector(x,y));return true;
+    }
+    return false;
+  }
+  function initializeCivs(){if(state.civStarted)return;state.civStarted=true;spawnCivilization(false);spawnCivilization(false)}
+  function discoverAlienAt(s){const faction=alienAt(key(s.x,s.y));if(!faction||faction.contacted||!s.discovered)return;
+    faction.contacted=true;chronicleEvent('birth','📡',`Primo contatto con ${faction.name} presso ${systemName(s)}. Temperamento: ${faction.disposition}.`,true,[faction.id]);alertToast('📡 Contatto alieno: '+faction.name)}
+  function factionStrength(c){return c.fleet+c.tech*3+Math.ceil(c.worlds.length*2)}
+  function factionDistance(a,b){let best=Infinity;for(const x of a.worlds)for(const y of b.worlds){const [x1,y1]=coords(x),[x2,y2]=coords(y);best=Math.min(best,Math.abs(x1-x2)+Math.abs(y1-y2))}return best}
+  function attemptCivExpansion(c){
+    if(c.worlds.length>=22||c.treasury<75||c.stability<30)return false;
+    const candidates=[];const seen=new Set(c.worlds);
+    for(const k of c.worlds){const [x,y]=coords(k);for(const [dx,dy] of [[1,0],[-1,0],[0,1],[0,-1]]){
+      const spot=key(x+dx,y+dy),world=sector(x+dx,y+dy);
+      if(seen.has(spot)||world.type==='empty'||world.type==='nexus'||state.sectors[spot]?.owned||alienAt(spot))continue;
+      seen.add(spot);candidates.push(spot);
+    }}
+    if(!candidates.length)return false;
+    const spot=candidates[hash(state.cycle,c.id,state.seed+14)%candidates.length];
+    c.worlds.push(spot);c.treasury-=75;c.population+=3;c.stability=Math.min(100,c.stability+1);
+    chronicleEvent('growth','🪐',`${c.name} colonizzano ${systemName(sector(...coords(spot)))}.`,false,[c.id]);
+    discoverAlienAt(sector(...coords(spot)));return true;
+  }
+  function civConflict(a,b){
+    if(factionDistance(a,b)>5)return;
+    const roll=hash(state.cycle,a.id*31+b.id,state.seed+991)%100;
+    const belligerent=['militarista','espansionista'].includes(a.disposition)||['militarista','espansionista'].includes(b.disposition);
+    if(roll<21&&!belligerent){const exchange=Math.min(18,a.treasury,b.treasury);if(exchange<4)return;a.treasury+=exchange*.12;b.treasury+=exchange*.12;
+      chronicleEvent('peace','🤝',`${a.name} e ${b.name} concludono scambi commerciali.`,false,[a.id,b.id]);return}
+    if(roll<33&&!belligerent){a.relations[b.id]='alleanza';b.relations[a.id]='alleanza';chronicleEvent('peace','🕊️',`${a.name} e ${b.name} stipulano un patto di cooperazione.`,false,[a.id,b.id]);return}
+    if(roll<48||!belligerent||a.relations[b.id]==='alleanza')return;
+    let winner=factionStrength(a)>=factionStrength(b)?a:b,loser=winner===a?b:a;
+    if(hash(a.id,b.id,state.cycle)%5===0){winner=winner===a?b:a;loser=winner===a?b:a}
+    const casualties=Math.min(loser.fleet,7+hash(a.id,b.id,state.cycle+6)%10);
+    loser.fleet=Math.max(0,loser.fleet-casualties);winner.fleet=Math.max(2,winner.fleet-Math.ceil(casualties/3));
+    loser.stability=Math.max(0,loser.stability-12);winner.stability=Math.max(0,winner.stability-3);
+    loser.population=Math.max(1,loser.population-3);loser.treasury=Math.max(0,loser.treasury-28);
+    const captured=loser.worlds.filter(k=>k!==loser.capital&&winner.worlds.some(w=>{const [x,y]=coords(k),[a,b]=coords(w);return Math.abs(x-a)+Math.abs(y-b)<=2}));
+    if(captured.length){const k=captured[0];loser.worlds=loser.worlds.filter(w=>w!==k);winner.worlds.push(k)}
+    if(loser.stability<=16&&loser.fleet<=8&&loser.worlds.length<=2)extinction(loser,`sconfitta militare contro ${winner.name}`)
+    chronicleEvent('war','⚔️',`${winner.name} prevalgono sui ${loser.name}${captured.length?', conquistando '+systemName(sector(...coords(captured[0]))):''}.`,false,[winner.id,loser.id]);
+  }
+  function simulateCivilizations(){
+    if(state.cycle%4!==0)return;
+    if(state.cycle%44===0)spawnCivilization(true);
+    const active=state.civilizations.filter(c=>c.status!=='extinct');
+    for(const c of active){
+      // Reddito e mantenimento: crescita legata alla disponibilità economica, non a risorse illimitate.
+      const income=c.worlds.reduce((n,k)=>{const base=KINDS[sector(...coords(k)).type].base;return n+6+Object.values(base).reduce((a,v)=>a+v,0)*.48},0)*(1+c.tech*.09);
+      const expenses=c.fleet*.11+c.population*.085+c.worlds.length*1.1;
+      c.treasury=Math.max(0,Math.min(100000,Math.round((c.treasury+income-expenses)*100)/100));
+      if(c.treasury>80&&c.population<800)c.population+=1;
+      if(c.treasury<8){c.stability=Math.max(0,c.stability-4);c.fleet=Math.max(0,c.fleet-2)}
+      else if(c.stability<100)c.stability++;
+      if(c.treasury>65&&state.cycle%24===0){const cost=18+c.tech*8;if(c.treasury>=cost){c.treasury-=cost;c.tech=Math.min(30,c.tech+1)}}
+      if(c.treasury>95&&state.cycle%16===0){c.treasury-=18;c.fleet=Math.min(250,c.fleet+3)}
+      if(c.status==='rising'&&c.tech>=2){c.status='active';chronicleEvent('growth','🚀',`${c.name} raggiungono la navigazione stellare.`,false,[c.id])}
+      if(state.cycle%12===0&&c.status==='active')attemptCivExpansion(c);
+      if(c.stability===0&&c.fleet<=0)extinction(c,'collasso economico e politico');
+    }
+    if(state.cycle%20===0){const living=active.filter(c=>c.status==='active');for(let i=0;i<living.length;i++)for(let j=i+1;j<living.length;j++)if(hash(i,j,state.cycle+state.seed)%3===0)civConflict(living[i],living[j])}
+    // Scissioni: crisi in imperi consolidati possono originare nuove fazioni autonome.
+    if(state.cycle%72===0&&state.civilizations.length<55){const parent=active.find(c=>c.status==='active'&&c.worlds.length>=5&&c.stability<45);if(parent){const breakaway=parent.worlds.pop();if(breakaway){const id=state.nextCivId++,newborn={id,name:'Liberi di '+systemName(sector(...coords(breakaway))),disposition:'pacifica',status:'rising',worlds:[breakaway],capital:breakaway,tech:Math.max(0,parent.tech-2),population:5,treasury:90,fleet:7,stability:64,contacted:parent.contacted,born:state.cycle,battles:0,relations:{}};state.civilizations.push(newborn);chronicleEvent('birth','🌱',`Una colonia si separa da ${parent.name}: nasce ${newborn.name}.`,false,[parent.id,id])}}}
+    for(const faction of active)if(faction.status==='active'&&faction.worlds.length===0)extinction(faction,'perdita degli ultimi sistemi')
+  }
+  function renderCivs(){
+    const known=state.civilizations.filter(c=>c.contacted),living=known.filter(c=>c.status!=='extinct'),extinct=known.filter(c=>c.status==='extinct');
+    q('#civ-overview').innerHTML=`<span class="tag highlight">📡 ${known.length} civiltà conosciute</span><span class="tag">🌐 ${living.length} attive</span><span class="tag">💀 ${extinct.length} estinte</span><span class="tag">✦ ${state.chronicle.length} eventi registrati</span>`;
+    q('#civilizations-list').innerHTML=known.length?known.sort((a,b)=>b.born-a.born).map(c=>{
+      const locations=c.worlds.filter(k=>state.sectors[k]?.discovered),strong=c.status==='extinct'?'Estinta':c.status==='rising'?'Emergente':'Attiva';
+      return `<div class="civ-card"><h3>👽 ${esc(c.name)} <span class="tag ${c.status==='extinct'?'warn':'highlight'}">${strong}</span></h3><p>Profilo: ${esc(c.disposition)} · Individuata al ciclo ${c.born}</p><div class="facts"><span class="tag">🪐 ${c.worlds.length} sistemi</span><span class="tag">⚗ L${c.tech}</span><span class="tag">🚀 ${c.fleet} potenza navale</span><span class="tag">♥ ${c.stability}%</span></div><p>Le civiltà evolvono anche senza l'intervento del giocatore. Diplomazia diretta e guerre tra imperi arriveranno nella versione 1.5.</p>${locations.length?`<button class="btn tiny ghost" data-observe="${c.id}">Mostra un sistema conosciuto ↗</button>`:''}</div>`;
+    }).join(''):'<div class="chronicle-empty">Non hai ancora stabilito contatti con altre civiltà. Esplora la galassia per scoprire i loro mondi: le civiltà lontane rimangono nascoste.</div>';
+    const filter=state.chronicleFilter||'all';q('#chronicle-filter').value=filter;
+    const visible=state.chronicle.filter(e=>(filter==='all'||e.kind===filter)&&(e.public||e.parties?.some(id=>state.civilizations.find(c=>c.id===id)?.contacted))).slice(0,60);
+    q('#galactic-chronicle').innerHTML=visible.length?visible.map(e=>`<article class="chronicle-event"><span class="event-icon">${esc(e.icon)}</span><div><time>Ciclo ${e.cycle}</time><p>${esc(e.text)}</p></div></article>`).join(''):'<div class="chronicle-empty">Nessun evento conosciuto per questo filtro. Esplora per rivelare nuove cronache.</div>';
+  }
+  function generatedSector(x,y){const h=hash(x,y);const types=['solar','metal','garden','archive','trade','ice','storm','void','empty','asteroid','metal','garden','empty','toxic','relic','trade'];return {x,y,type:types[h%types.length],discovered:false,owned:false,level:0,shield:0,mineLevel:0}}
   function sector(x,y){return state.sectors[key(x,y)]||generatedSector(x,y)}
   function stored(x,y){const k=key(x,y);if(!state.sectors[k])state.sectors[k]=generatedSector(x,y);return state.sectors[k]}
   function owned(){return Object.values(state.sectors).filter(s=>s.owned)}
@@ -227,8 +368,8 @@
   function distance(s){return Math.abs(s.x)+Math.abs(s.y)}
   function nearbyOwned(s){return [[1,0],[-1,0],[0,1],[0,-1]].some(([a,b])=>!!state.sectors[key(s.x+a,s.y+b)]?.owned)}
   function nearbyOwnedCount(s){return [[1,0],[-1,0],[0,1],[0,-1]].filter(([a,b])=>!!state.sectors[key(s.x+a,s.y+b)]?.owned).length}
-  function isReachable(s){return !s.owned&&nearbyOwned(s)}
-  function colonyCost(s){let factor=1+distance(s)*.13;const discount=Math.max(.57,1-state.tech.quantum*.045);return {metal:Math.round(38*factor*discount),energy:Math.round(22*(1+distance(s)*.09)*discount),credits:Math.round(27*factor*discount)}}
+  function isReachable(s){return !s.owned&&(nearbyOwned(s)||(state.tech.sensors>=1&&[[1,0],[-1,0],[0,1],[0,-1]].some(([a,b])=>!!state.sectors[key(s.x+a,s.y+b)]?.discovered)))}
+  function colonyCost(s){let factor=(1+distance(s)*.13)*(sectorProfile(s).zone==='hostile'?1.38:sectorProfile(s).zone==='favorable'?.9:1);const discount=Math.max(.57,1-state.tech.quantum*.045);return {metal:Math.round(38*factor*discount),energy:Math.round(22*(1+distance(s)*.09)*discount),credits:Math.round(27*factor*discount)}}
   function scoutCost(s){return {energy:Math.round(13+distance(s)*3),credits:Math.round(8+distance(s)*2)}}
   function maxFactoryLevel(){return Math.min(50,1+state.tech.industry*3)}
   function maxShieldLevel(){return Math.min(40,1+state.tech.defense*2)}
@@ -237,7 +378,7 @@
   function techEnabled(id){return Object.entries(PREREQ[id]||{}).every(([parent,n])=>state.tech[parent]>=n)}
   function upgradeCost(s){const lv=s.level-1;return {metal:Math.round(25*Math.pow(1.39,lv)),credits:Math.round(22*Math.pow(1.38,lv)),energy:Math.round(9*Math.pow(1.23,lv))}}
   function shieldCost(s){const lv=s.shield;return {metal:Math.round(28*Math.pow(1.55,lv)),credits:Math.round(19*Math.pow(1.43,lv))}}
-  function techCost(id){const lv=state.tech[id];return {science:Math.round(29*Math.pow(1.56,lv)),credits:Math.round(22*Math.pow(1.38,lv))}}
+  function techCost(id){const lv=state.tech[id];const cost={science:Math.round(29*Math.pow(1.56,lv)),credits:Math.round(22*Math.pow(1.38,lv))};if(['archaeology','outposts'].includes(id)&&lv>=2)cost.relics=lv-1;return cost}
   function canPay(cost){return Object.entries(cost).every(([k,v])=>state.resources[k]!==undefined&&state.resources[k]+1e-8>=v)}
   function transact(cost){if(!canPay(cost))return false;Object.entries(cost).forEach(([k,v])=>state.resources[k]=Math.max(0,state.resources[k]-v));return true}
   function add(resources){Object.entries(resources).forEach(([k,v])=>{if(k in state.resources)state.resources[k]=Math.max(0,state.resources[k]+v);else if(k==='morale')state.morale=clamp(state.morale+v,0,100);else if(k==='population')state.population=clamp(state.population+v,1,capacity())})}
@@ -245,8 +386,8 @@
   function strength(){return Math.round(11+state.tech.defense*6+owned().reduce((a,s)=>a+s.shield*3.5,0)+state.ships.reduce((a,s)=>a+(s.assignment?SHIPPOWER(s,s.assignment)*.3:0),0))}
   function danger(){return Math.round(10+Math.max(0,ownedCount()-1)*5+Math.max(...owned().map(distance))*1.5)}
   function efficiency(){return .82+state.morale*.0021}
-  function yieldFor(s){if(!s.owned)return {};const levelBonus=1+(s.level-1)*.58;const bond=Math.min(.22,Math.max(0,nearbyOwnedCount(s)-(s.x===0&&s.y===0?0:1))*.055);const base=KINDS[s.type].base;const res={};Object.keys(RESOURCE).forEach(k=>{let tech=1;if(k==='metal')tech=(1+state.tech.industry*.16)*(1+(s.mineLevel||0)*.28);if(k==='energy')tech+=state.tech.industry*.08;if(k==='food')tech+=state.tech.biology*.15;if(k==='science')tech+=state.tech.quantum*.18;if(k==='credits')tech+=state.tech.quantum*.13;res[k]=(base[k]||0)*levelBonus*(1+bond)*tech*efficiency()});return res}
-  function production(){const totals={energy:0,metal:0,food:0,science:0,credits:0};owned().forEach(s=>Object.entries(yieldFor(s)).forEach(([k,v])=>totals[k]+=v));totals.energy-=ownedCount()*.58;totals.food-=state.population*.17;return totals}
+  function yieldFor(s){if(!s.owned)return {};const levelBonus=1+(s.level-1)*.58;const bond=Math.min(.22,Math.max(0,nearbyOwnedCount(s)-(s.x===0&&s.y===0?0:1))*.055);const base=KINDS[s.type].base;const res={};Object.keys(RESOURCE).forEach(k=>{let tech=1;if(k==='metal')tech=(1+state.tech.industry*.16)*(1+(s.mineLevel||0)*.28);if(k==='energy')tech+=state.tech.industry*.08;if(k==='food')tech+=state.tech.biology*.15;if(k==='science')tech+=state.tech.quantum*.18;if(k==='credits')tech+=state.tech.quantum*.13;res[k]=(base[k]||0)*levelBonus*(1+bond)*tech*efficiency()*(sectorProfile(s).zone==='favorable'?1.18:sectorProfile(s).zone==='hostile'?.78:1)*(k==='metal'?1+state.tech.geo*.08:1)*(k==='food'?1+state.tech.xeno*.09:1)});return res}
+  function production(){const totals={energy:0,metal:0,food:0,science:0,credits:0,relics:0};owned().forEach(s=>Object.entries(yieldFor(s)).forEach(([k,v])=>totals[k]+=v));totals.energy-=ownedCount()*.58;totals.food-=state.population*.17;return totals}
   function log(icon,title,description){state.log.unshift({cycle:state.cycle,icon,title,text:description});state.log=state.log.slice(0,85)}
   function alertToast(message,error=false){const t=q('#toast');t.textContent=message;t.classList.toggle('error',error);t.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove('show'),2900)}
   function payError(){alertToast('Risorse insufficienti: puoi attendere o usare il Mercato.',true)}
@@ -257,7 +398,7 @@
   function idleShips(role){return state.ships.filter(ship=>!ship.fleetId&&!flying(ship)&&ship.assignment===null&&SHIPS[ship.type].roles.includes(role))}
   function travelCycles(from,to,ship){const [a,b]=coords(from),[x,y]=coords(to);const steps=Math.abs(a-x)+Math.abs(b-y);return Math.max(1,Math.ceil((1+steps*1.55)/(SHIPS[ship.type].speed*(1+state.tech.propulsion*.19))))}
   function missionFor(k,role){return state.missions.find(m=>m.to===k&&m.role===role)}
-  function hostile(s){return !(s.x===0&&s.y===0)&&!s.owned&&!s.cleared&&hash(s.x,s.y,state.seed+1039)%7===0}
+  function hostile(s){return !(s.x===0&&s.y===0)&&!s.owned&&!s.cleared&&!alienAt(key(s.x,s.y))&&s.type!=='empty'&&hash(s.x,s.y,state.seed+1039)%7===0}
   function startMission(ship,role,destination){const from=ship.location;if(!from||flying(ship)||ship.assignment||!SHIPS[ship.type].roles.includes(role))return false;
     const cycles=travelCycles(from,destination,ship);const id=(state.nextMissionId||1);state.nextMissionId=id+1;
     state.missions.push({id,shipId:ship.id,role,from,to:destination,startCycle:state.cycle,endCycle:state.cycle+cycles});
@@ -285,7 +426,7 @@
       if(h<21){const v=(10+distance(o)*3)*(ship.type==='explorer'?2:1);state.resources.science+=v;bonus=` +${v} ricerca.`}
       else if(h<38){const v=(19+distance(o)*4)*(ship.type==='explorer'?2:1);state.resources.metal+=v;bonus=` +${v} metallo.`}
       log('🔭','Sistema esplorato',`${desc} ha scoperto ${systemName(o)} (${KINDS[o.type].name}).${hostile(o)?' Attenzione: covo pirata rilevato!':''}${bonus}`);
-      if(!(state.automations.explore?.active&&state.automations.explore.shipId===ship.id)&&ship.location!=='0,0'){ship.location=m.to;returnTrip(ship)}
+      discoverAlienAt(o);if(!(state.automations.explore?.active&&state.automations.explore.shipId===ship.id)&&ship.location!=='0,0'){ship.location=m.to;returnTrip(ship)}
     }else if(m.role==='upgrade'){
       const job=state.automations.mining;
       if(job?.active&&job.shipId===ship.id&&o.owned&&(o.mineLevel||0)<Math.min(job.target,maxMineLevel())){
@@ -419,7 +560,9 @@
     if((o.mineLevel||0)>=maxMineLevel())return alertToast('Studia Ingegneria mineraria per livelli superiori.',true);
     if(!transact(mineCost(o)))return payError();o.mineLevel=(o.mineLevel||0)+1;log('⛏️','Miniera migliorata',`${systemName(o)}: estrazione mineraria livello ${o.mineLevel}.`);commit();alertToast('Miniera migliorata!')
   }
-  function colonize(s){const o=state.sectors[key(s.x,s.y)];if(!o||!o.discovered||o.owned||!isReachable(o))return alertToast('Esplora prima un settore confinante.',true);if(hostile(o))return alertToast('Prima elimina il covo pirata con una nave d’assalto.',true);if(!transact(colonyCost(o)))return payError();o.owned=true;o.level=1;o.shield=0;o.mineLevel=0;state.population=Math.min(capacity(),state.population+2);state.morale=clamp(state.morale+3,0,100);log('🏗️','Nuova colonia',`${systemName(o)} è entrato nella rete coloniale. Produzione ${KINDS[o.type].name.toLowerCase()} attivata.`);checkObjective();commit();alertToast('Colonia fondata su '+systemName(o)+'!')}
+  function colonize(s){if(s.type==='empty')return alertToast('Settore privo di pianeti: costruisci un avamposto orbitale dopo la ricerca.',true);if(alienAt(key(s.x,s.y)))return alertToast('Settore sotto controllo alieno: le relazioni diplomatiche saranno introdotte nella versione 1.5.',true);if(sectorProfile(s).zone==='hostile'&&state.tech.geo<1)return alertToast('Sblocca Esogeologia L1 prima di colonizzare un ambiente ostile.',true);const o=state.sectors[key(s.x,s.y)];if(!o||!o.discovered||o.owned||!nearbyOwned(o))return alertToast('Per colonizzare serve una colonia o un avamposto confinante.',true);if(hostile(o))return alertToast('Prima elimina il covo pirata con una nave d’assalto.',true);if(!transact(colonyCost(o)))return payError();o.owned=true;o.level=1;o.shield=0;o.mineLevel=0;state.population=Math.min(capacity(),state.population+2);state.morale=clamp(state.morale+3,0,100);log('🏗️','Nuova colonia',`${systemName(o)} è entrato nella rete coloniale. Produzione ${KINDS[o.type].name.toLowerCase()} attivata.`);checkObjective();commit();alertToast('Colonia fondata su '+systemName(o)+'!')}
+  function buildOutpost(s){const o=state.sectors[key(s.x,s.y)];if(!o||!o.discovered||o.type!=='empty'||o.owned||!nearbyOwned(o)||alienAt(key(o.x,o.y)))return alertToast('Serve un settore vuoto scoperto e confinante con la tua rete.',true);if(state.tech.outposts<1)return alertToast('Sblocca Ingegneria orbitale L1.',true);const cost={metal:55,energy:42,credits:48};if(!transact(cost))return payError();o.owned=true;o.outpost=true;o.level=1;o.shield=0;log('🛰️','Avamposto costruito',`Stazione orbitale su ${systemName(o)}: nuove rotte e confini esplorabili.`);commit();alertToast('Avamposto operativo!')}
+  function analyzeAnomaly(s){const o=state.sectors[key(s.x,s.y)];if(!o?.discovered||o.analyzed||sectorProfile(o).zone!=='anomaly')return;if(state.tech.archaeology<1)return alertToast('Richiede Archeologia stellare L1.',true);if(!transact({science:20,energy:18}))return payError();const artifacts=1+hash(o.x,o.y,state.seed+345)%3,science=20+distance(o)*2;add({relics:artifacts,science});o.analyzed=true;chronicleEvent('growth','🔎',`I ricercatori di Nexus hanno catalogato ${artifacts} reperti presso ${systemName(o)}.`,true);log('🔎','Anomalia studiata',`${systemName(o)}: +${artifacts} reperti e +${science} ricerca.`);commit();alertToast('Anomalia analizzata: reperti recuperati!')}
   function upgrade(s){const o=state.sectors[key(s.x,s.y)];if(!o||!o.owned)return;if(o.level>=maxFactoryLevel())return alertToast('Ricerca Industria avanzata per sbloccare nuovi livelli produttivi.',true);if(!transact(upgradeCost(o)))return payError();o.level++;log('⬆️','Produzione potenziata',`${systemName(o)} ha raggiunto il livello ${o.level}.`);checkObjective();commit();alertToast('Produzione livello '+o.level)}
   function buildShield(s){const o=state.sectors[key(s.x,s.y)];if(!o||!o.owned)return;if(o.shield>=maxShieldLevel())return alertToast('Ricerca Difesa orbitale per potenziare ulteriormente gli scudi.',true);if(!transact(shieldCost(o)))return payError();o.shield++;log('🛡️','Difese potenziate',`Scudi orbitali su ${systemName(o)}: livello ${o.shield}.`);checkObjective();commit();alertToast('Difesa aumentata!')}
   function research(id){if(!TECH[id])return;if(!techEnabled(id))return alertToast('Completa prima la ricerca propedeutica indicata nell’albero.',true);const cost=techCost(id);if(!transact(cost))return payError();state.tech[id]++;log('⚗️','Ricerca completata',`${TECH[id].name} al livello ${state.tech[id]}.`);checkObjective();commit();alertToast('Tecnologia sbloccata: '+TECH[id].name)}
@@ -442,23 +585,26 @@
     else{const v=Math.min(3,Math.max(0,capacity()-state.population));state.population+=v;log('🚀','Nuovi residenti',`${v} coloni hanno raggiunto la federazione.`)}}
   function advance(){state.cycle++;const pr=production();Object.entries(pr).forEach(([k,v])=>state.resources[k]=Math.max(0,state.resources[k]+v));if(state.resources.food<.01){state.morale=clamp(state.morale-2.6,0,100);if(state.cycle%5===0&&state.population>2){state.population--;log('🥀','Carenza alimentare','Un cittadino ha abbandonato la colonia. Aumenta la produzione di cibo.')}}else if(state.cycle%4===0)state.morale=clamp(state.morale+.8,0,100);
     if(state.cycle%7===0&&state.resources.food>20&&state.population<capacity()&&state.morale>44)state.population++;
-    if(state.cycle%11===0)randomEvent();progressMissions();progressFleetTrips();processAutomations();if(state.cycle%17===13)scheduleRaid();resolveRaids();checkObjective();lastTickAt=performance.now();commit();}
+    if(state.cycle%11===0)randomEvent();simulateCivilizations();progressMissions();progressFleetTrips();processAutomations();if(state.cycle%17===13)scheduleRaid();resolveRaids();checkObjective();lastTickAt=performance.now();commit();}
   function costHTML(cost){return `<div class="cost">${Object.entries(cost).map(([k,v])=>`<span class="${state.resources[k]!==undefined&&state.resources[k]<v?'insufficient':''}">${RESOURCE[k]?.icon||'◇'} ${nfmt(v)}</span>`).join('')}</div>`}
   function affordButton(cost){return canPay(cost)?'':' disabled title="Risorse insufficienti"'}
   function commit(){save();render()}
   function renderResources(){const p=production();q('#resource-grid').innerHTML=Object.entries(RESOURCE).map(([k,info])=>`<div class="res"><div class="res-top"><span class="res-name">${info.name}</span><span class="res-icon">${info.icon}</span></div><div class="res-value" title="${state.resources[k].toFixed(2)}">${nfmt(state.resources[k])}</div><div class="res-delta ${p[k]<0?'minus':''}">${p[k]>=0?'+':''}${p[k].toFixed(1).replace('.',',')} / ciclo</div></div>`).join('')}
-  function renderMap(){const items=[];for(let y=state.panY-3;y<=state.panY+3;y++){for(let x=state.panX-4;x<=state.panX+4;x++){const s=sector(x,y),reached=isReachable(s),type=KINDS[s.type];const here=key(x,y),threat=state.threats.some(t=>t.target===here),incoming=state.missions.some(m=>m.to===here);const cls=['tile',s.owned?'owned':s.discovered?'discovered':reached?'reachable':'fog',here===state.focus?'selected':'',threat?'threat-target':'',incoming?'inflight-target':''].join(' ');const marker=s.owned?type.icon:s.discovered?type.icon:reached?'✧':'·';const short=s.owned?'COLONIA':s.discovered?(hostile(s)?'PIRATI':'SCOPERTO'):reached?'ESPLORA':'IGNOTO';const stationed=state.ships.filter(t=>t.location===here&&t.assignment&&!flying(t)).length+state.fleets.filter(f=>f.location===here&&f.mode==='defend').reduce((n,f)=>n+f.shipIds.length,0);items.push(`<button class="${cls}" data-sector="${x},${y}" title="${esc(s.discovered?systemName(s)+' — '+type.name:'Settore '+x+','+y)}" aria-label="Settore ${x},${y}, ${short}"><span class="shieldmark">${s.shield>0?'⬡'+s.shield:''}</span><span class="lvl">${s.owned?'L'+s.level:''}</span><span class="tile-ico">${marker}</span><span class="tile-label">${s.owned?esc(systemName(s).split(' ')[0]):short}</span>${stationed?`<span class="ship-badge" title="${stationed} nave/i">🚀${stationed}</span>`:''}</button>`)}}
+  function renderMap(){const items=[];for(let y=state.panY-3;y<=state.panY+3;y++){for(let x=state.panX-4;x<=state.panX+4;x++){const s=sector(x,y),reached=isReachable(s),type=KINDS[s.type];const here=key(x,y),threat=state.threats.some(t=>t.target===here),incoming=state.missions.some(m=>m.to===here);const alien=s.discovered?alienAt(here):null,ruin=s.discovered?ruinAt(here):null,profile=sectorProfile(s);const cls=['tile',s.owned?'owned':s.discovered?'discovered':reached?'reachable':'fog',here===state.focus?'selected':'',threat?'threat-target':'',incoming?'inflight-target':'',alien?'alien-sector':'',profile.zone==='empty'&&s.discovered?'empty-sector':''].join(' ');const marker=s.owned?type.icon:s.discovered?(alien?'👽':ruin?'🏛️':type.icon):reached?'✧':'·';const short=s.owned?(s.outpost?'AVAMPOSTO':'COLONIA'):s.discovered?(alien?'ALIENI':ruin?'ROVINE':hostile(s)?'PIRATI':profile.zone==='empty'?'VUOTO':profile.zone==='hostile'?'OSTILE':'SCOPERTO'):reached?'ESPLORA':'IGNOTO';const stationed=state.ships.filter(t=>t.location===here&&t.assignment&&!flying(t)).length+state.fleets.filter(f=>f.location===here&&f.mode==='defend').reduce((n,f)=>n+f.shipIds.length,0);items.push(`<button class="${cls}" data-sector="${x},${y}" title="${esc(s.discovered?systemName(s)+' — '+type.name:'Settore '+x+','+y)}" aria-label="Settore ${x},${y}, ${short}"><span class="shieldmark">${s.shield>0?'⬡'+s.shield:''}</span><span class="lvl">${s.owned?'L'+s.level:alien?'✦':''}</span><span class="tile-ico">${marker}</span><span class="tile-label">${s.owned?esc(systemName(s).split(' ')[0]):short}</span>${stationed?`<span class="ship-badge" title="${stationed} nave/i">🚀${stationed}</span>`:''}</button>`)}}
     q('#map-grid').innerHTML=items.join('')+`<div class="fleet-overlay" id="fleet-overlay" aria-hidden="true"></div>`;renderFlightSprites();renderMissionStrip();q('#map-coord').textContent=`Centro: ${state.panX}, ${state.panY}`}
-  function renderDetail(){const [x,y]=state.focus.split(',').map(Number);const s=sector(x,y),type=KINDS[s.type];const reachable=isReachable(s);let html=`<div class="panel-head"><h2>◈ Scheda del settore</h2><span class="coord">${x}, ${y}</span></div>`;
+  function renderDetail(){const [x,y]=state.focus.split(',').map(Number);const s=sector(x,y),type=KINDS[s.type];const reachable=isReachable(s),profile=sectorProfile(s),alien=s.discovered?alienAt(key(x,y)):null,ruin=s.discovered?ruinAt(key(x,y)):null;let html=`<div class="panel-head"><h2>◈ Scheda del settore</h2><span class="coord">${x}, ${y}</span></div>`;
     if(!s.discovered){html+=`<div class="detail-intro"><div class="detail-icon">${reachable?'✧':'?'}</div><div><h3 class="detail-title">Settore ignoto</h3><p class="detail-sub">Coordinate ${x}, ${y}</p></div></div><p class="sector-desc">${reachable?'I sensori rilevano un sistema ai confini del tuo territorio. Una missione di ricognizione può svelarne le risorse.':'Questo settore è troppo lontano dalla tua rete coloniale. Espandi prima il territorio verso di esso.'}</p><div class="pill-row"><span class="tag ${reachable?'highlight':''}">${reachable?'DISPONIBILE ALLA RICOGNIZIONE':'FUORI PORTATA'}</span></div>`;
       if(reachable){const cost=scoutCost(s),m=missionFor(key(x,y),'explore'),has=idleShips('explore').length>0;html+=`<div class="sep"></div><div class="action-block"><b>🚀 Missione di ricognizione</b><p class="btn-desc">Una sonda partirà dalla sua posizione attuale e raggiungerà il settore in ${has?travelCycles(idleShips('explore')[0].location,key(x,y),idleShips('explore')[0]):'alcuni'} cicli. La scoperta avviene solo all’arrivo.</p>${costHTML(cost)}<button class="btn primary full" data-act="scout"${m||!has?' disabled':affordButton(cost)}>${m?'⏳ In viaggio · '+(m.endCycle-state.cycle)+' cicli':has?'🚀 Invia nave esploratrice':'🚫 Nessuna sonda disponibile'}</button></div>`}else html+=`<div class="sep"></div><p class="small muted">Suggerimento: i settori con ✧ sulla mappa sono esplorabili.</p>`;
-      q('#detail-panel').innerHTML=html+`<button class="btn tiny ghost mobile-map-back" data-scroll="map">↑ Torna alla mappa</button>`;return}
-    html+=`<div class="detail-intro"><div class="detail-icon">${type.icon}</div><div><h3 class="detail-title">${esc(systemName(s))}</h3><p class="detail-sub">${type.name}</p></div></div><div class="pill-row"><span class="tag ${s.owned?'highlight':'warn'}">${s.owned?'● COLONIZZATO':'◌ ESPLORATO'}</span>${s.owned?`<span class="tag">LIVELLO ${s.level}</span>`:''}<span class="tag">DISTANZA ${distance(s)}</span></div><p class="sector-desc">${type.description}</p>${hostile(s)?`<div class="mission-chip enemy">☠️ Covo pirata! Sgombra il settore prima di colonizzarlo.</div>`:''}`;
-    if(s.owned){const y=yieldFor(s);html+=`<div class="panel-sub">PRODUZIONE PER CICLO</div><div class="yield-lines">${Object.entries(y).filter(([k,v])=>v>.001).map(([k,v])=>`<div class="yield"><span>${RESOURCE[k].icon} ${RESOURCE[k].name}</span><b>+${v.toFixed(1).replace('.',',')}</b></div>`).join('')}</div><div class="action-block"><b>${s.level>=maxFactoryLevel()?'🔒 Richiede Industria avanzata':'Potenzia produzione → L'+(s.level+1)}</b>${s.level>=maxFactoryLevel()?'':costHTML(upgradeCost(s))}<button class="btn primary full" data-act="upgrade"${s.level>=maxFactoryLevel()?' disabled':affordButton(upgradeCost(s))}>${s.level>=maxFactoryLevel()?'🔒 Ricerca per migliorare':'⬆ Migliora impianti'}</button></div>${(KINDS[s.type].base.metal||0)>0?`<div class="action-block"><b>⛏️ Miniera · Livello ${s.mineLevel||0} / ${maxMineLevel()}</b><p class="btn-desc">Produzione di metallo +28% per livello. I livelli richiedono Ingegneria mineraria.</p>${(s.mineLevel||0)<maxMineLevel()?costHTML(mineCost(s)):''}<button class="btn full" data-act="mine"${(s.mineLevel||0)>=maxMineLevel()?' disabled':affordButton(mineCost(s))}>${(s.mineLevel||0)>=maxMineLevel()?'🔒 Ricerca nuova tecnologia':'⬆ Potenzia miniera'}</button></div>`:''}<div class="action-block"><b>${s.shield>=maxShieldLevel()?'🔒 Richiede Difesa orbitale':'Scudo orbitale → L'+(s.shield+1)}</b>${s.shield>=maxShieldLevel()?'':costHTML(shieldCost(s))}<button class="btn full" data-act="shield"${s.shield>=maxShieldLevel()?' disabled':affordButton(shieldCost(s))}>${s.shield>=maxShieldLevel()?'🔒 Ricerca per migliorare':'🛡️ Costruisci difese'}</button></div>`}
-    else{const cost=colonyCost(s);html+=`<div class="sep"></div><div class="action-block"><b>Fondazione della colonia</b><p class="btn-desc">La colonia inizia a produrre risorse a ogni ciclo e amplia il raggio esplorabile.</p>${costHTML(cost)}<button class="btn primary full" data-act="colonize"${hostile(s)?' disabled title="Prima elimina i pirati"':affordButton(cost)}>🚀 ${hostile(s)?'Sgombera prima i pirati':'Colonizza sistema'}</button></div>`}
+    q('#detail-panel').innerHTML=html+`<button class="btn tiny ghost mobile-map-back" data-scroll="map">↑ Torna alla mappa</button>`;return}
+    html+=`<div class="detail-intro"><div class="detail-icon">${type.icon}</div><div><h3 class="detail-title">${esc(systemName(s))}</h3><p class="detail-sub">${type.name}</p></div></div><div class="pill-row"><span class="tag ${s.owned?'highlight':'warn'}">${s.owned?'● COLONIZZATO':'◌ ESPLORATO'}</span>${s.owned?`<span class="tag">LIVELLO ${s.level}</span>`:''}<span class="tag">DISTANZA ${distance(s)}</span><span class="tag ${profile.zone==='hostile'?'warn':profile.zone==='favorable'?'highlight':''}">${profile.label}</span></div><p class="sector-desc">${type.description}</p>${alien?`<div class="mission-chip enemy">👽 Territorio ${esc(alien.name)}. La colonizzazione richiede future interazioni diplomatiche.</div>`:''}${ruin?`<div class="mission-chip">🏛️ Rovine dei ${esc(ruin.name)} (ciclo ${ruin.cycle}): resti di una civiltà scomparsa.</div>`:''}${hostile(s)?`<div class="mission-chip enemy">☠️ Covo pirata! Sgombra il settore prima di colonizzarlo.</div>`:''}`;
+    if(s.owned&&s.outpost){html+=`<div class="action-block"><b>🛰️ Avamposto orbitale</b><p class="btn-desc">Nodo di passaggio e ricognizione. Non può ospitare insediamenti planetari né miniere.</p></div>`}
+    if(s.owned&&!s.outpost){const y=yieldFor(s);html+=`<div class="panel-sub">PRODUZIONE PER CICLO</div><div class="yield-lines">${Object.entries(y).filter(([k,v])=>v>.001).map(([k,v])=>`<div class="yield"><span>${RESOURCE[k].icon} ${RESOURCE[k].name}</span><b>+${v.toFixed(1).replace('.',',')}</b></div>`).join('')}</div><div class="action-block"><b>${s.level>=maxFactoryLevel()?'🔒 Richiede Industria avanzata':'Potenzia produzione → L'+(s.level+1)}</b>${s.level>=maxFactoryLevel()?'':costHTML(upgradeCost(s))}<button class="btn primary full" data-act="upgrade"${s.level>=maxFactoryLevel()?' disabled':affordButton(upgradeCost(s))}>${s.level>=maxFactoryLevel()?'🔒 Ricerca per migliorare':'⬆ Migliora impianti'}</button></div>${(KINDS[s.type].base.metal||0)>0?`<div class="action-block"><b>⛏️ Miniera · Livello ${s.mineLevel||0} / ${maxMineLevel()}</b><p class="btn-desc">Produzione di metallo +28% per livello. I livelli richiedono Ingegneria mineraria.</p>${(s.mineLevel||0)<maxMineLevel()?costHTML(mineCost(s)):''}<button class="btn full" data-act="mine"${(s.mineLevel||0)>=maxMineLevel()?' disabled':affordButton(mineCost(s))}>${(s.mineLevel||0)>=maxMineLevel()?'🔒 Ricerca nuova tecnologia':'⬆ Potenzia miniera'}</button></div>`:''}<div class="action-block"><b>${s.shield>=maxShieldLevel()?'🔒 Richiede Difesa orbitale':'Scudo orbitale → L'+(s.shield+1)}</b>${s.shield>=maxShieldLevel()?'':costHTML(shieldCost(s))}<button class="btn full" data-act="shield"${s.shield>=maxShieldLevel()?' disabled':affordButton(shieldCost(s))}>${s.shield>=maxShieldLevel()?'🔒 Ricerca per migliorare':'🛡️ Costruisci difese'}</button></div>`}
+    else if(!s.owned&&s.type==='empty'){const cost={metal:55,energy:42,credits:48};html+=`<div class="sep"></div><div class="action-block"><b>🛰️ Costruisci avamposto orbitale</b><p class="btn-desc">Non esiste un pianeta abitabile, ma una stazione può ampliare i confini e produrre ricerca. Richiede Ingegneria orbitale L1 e un sistema adiacente già controllato.</p>${costHTML(cost)}<button class="btn primary full" data-act="outpost"${state.tech.outposts<1||!nearbyOwned(s)?' disabled':affordButton(cost)}>Costruisci avamposto</button></div>`}
+    else if(!s.owned){const cost=colonyCost(s);const blocked=!!alien||!nearbyOwned(s)||sectorProfile(s).zone==='hostile'&&state.tech.geo<1;html+=`<div class="sep"></div><div class="action-block"><b>Fondazione della colonia</b><p class="btn-desc">La colonia inizia a produrre risorse a ogni ciclo e amplia il raggio esplorabile.</p>${costHTML(cost)}<button class="btn primary full" data-act="colonize"${hostile(s)||blocked?' disabled':affordButton(cost)}>🚀 ${alien?'Territorio alieno':!nearbyOwned(s)?'Richiede sistema confinante':blocked?'Richiede Esogeologia':'Colonizza sistema'}</button></div>`}
     if(s.owned){const stationed=state.ships.filter(ship=>ship.location===key(x,y)&&ship.assignment&&!flying(ship));const attack=state.threats.find(t=>t.target===key(x,y));html+=`<div class="sep"></div><div class="action-block"><b>🚀 Flotta e protezione del settore</b><div class="small muted">Difesa locale: <b style="color:var(--good)">${localDefense(key(x,y))}</b>${attack?` · <strong style="color:var(--red)">Attacco ${attack.power} fra ${attack.endCycle-state.cycle} cicli!</strong>`:''}</div><p class="btn-desc">${stationed.length} navi schierate. Le pattuglie difendono anche i sistemi vicini.</p><div class="ship-actions"><button class="btn primary" data-mission="defend"${idleShips('defend').length?'':' disabled'}>🛡️ Invia in difesa</button><button class="btn" data-mission="patrol"${idleShips('patrol').length?'':' disabled'}>◇ Invia pattuglia</button></div><button class="btn ghost full" data-view="fleet">Gestisci tutte le flotte ↗</button></div>`}
     else if(hostile(s)){const m=missionFor(key(x,y),'attack');html+=`<div class="action-block"><b>☠️ Operazione di assalto</b><p class="btn-desc">Serve una fregata o un incrociatore. Gli esiti dipendono dalla potenza dell’attacco.</p><button class="btn primary full" data-mission="attack"${m||!idleShips('attack').length?' disabled':''}>${m?'⏳ Assalto in corso':'💥 Invia flotta d’assalto'}</button></div>`}
     if(!s.owned){html+=`<div class="action-block"><b>🧬 Missione scientifica</b><p class="btn-desc">Invia una nave laboratorio a raccogliere dati e punti ricerca.</p><button class="btn" data-mission="research"${idleShips('research').length?'':' disabled'}>🔬 Analizza settore</button></div>`}
+      if(profile.zone==='anomaly'){html+=`<div class="action-block"><b>🔎 Anomalia scientifica ${s.analyzed?'analizzata':'non studiata'}</b><p class="btn-desc">Recupera reperti e ricerca attraverso Archeologia stellare L1. Analisi una sola volta per settore.</p>${!s.analyzed?costHTML({science:20,energy:18}):''}<button class="btn full" data-act="anomaly"${s.analyzed||state.tech.archaeology<1?' disabled':affordButton({science:20,energy:18})}>${s.analyzed?'Analisi conclusa':state.tech.archaeology<1?'🔒 Sblocca Archeologia stellare':'Analizza reperti'}</button></div>`}
     q('#detail-panel').innerHTML=html+`<button class="btn tiny ghost mobile-map-back" data-scroll="map">↑ Torna alla mappa</button>`;
   }
   function renderEmpire(){const d=danger(),s=strength();const t=s>=d?'Stabile':s>=d-10?'Vigilanza':'A rischio';const cls=s>=d?'highlight':'warn';q('#empire-panel').innerHTML=`<div class="panel-head"><h2>🌐 Stato dell'impero</h2></div><div class="pill-row"><span class="tag ${cls}">${t.toUpperCase()}</span><span class="tag">${ownedCount()} ${ownedCount()===1?'COLONIA':'COLONIE'}</span></div><div class="yield-lines" style="margin-bottom:5px"><div class="yield"><span>🛡️ Difesa</span><b>${s}</b></div><div class="yield"><span>⚠️ Minaccia</span><b style="color:${s>=d?'var(--good)':'var(--red)'}">${d}</b></div><div class="yield"><span>👤 Popolazione</span><b>${state.population}/${capacity()}</b></div><div class="yield"><span>♥ Morale</span><b>${Math.round(state.morale)}%</b></div></div><p class="btn-desc">I predoni possono attaccare ogni 17 cicli. Colonizzare mondi lontani aumenta la minaccia.</p><button class="btn ghost full" data-view="research">⚗ Potenzia la tecnologia ↗</button>`}
@@ -533,17 +679,17 @@
     svg.setAttribute('viewBox',`0 0 ${tree.clientWidth} ${tree.clientHeight}`);svg.innerHTML=links.join('');
   }
   function renderMarket(){q('#market-grid').innerHTML=TRADES.map(t=>`<article class="trade-card"><div class="trade-ico">${t.icon}</div><h3>${t.title}</h3><p>${t.desc}</p><div class="small muted">OTTIENI</div><div style="margin:8px 0 14px" class="cost">${Object.entries(t.give).map(([k,v])=>`<span style="color:var(--good)">+${nfmt(v)} ${RESOURCE[k]?.name||k}</span>`).join('')}</div><div class="sep" style="margin:0 0 13px"></div><div class="small muted">COSTO</div><div style="margin:8px 0 12px">${costHTML(t.cost)}</div><div class="tech-foot"><span class="small muted">Transazione istantanea</span><button class="btn primary" data-trade="${t.id}"${affordButton(t.cost)}>Scambia ⇄</button></div></article>`).join('')}
-  function render(){q('#cycle').textContent=nfmt(state.cycle);q('#pause-btn').textContent=state.paused?'▶ Riprendi':'Ⅱ Pausa';q('#speed-btn').textContent=state.speed+'×';renderResources();renderMap();renderDetail();renderEmpire();renderStatus();renderObjective();renderLog();if(activeView==='research')renderTech();if(activeView==='market')renderMarket();if(activeView==='fleet')renderFleet()}
-  function setView(view){if(!['galaxy','fleet','research','market','history'].includes(view))return;activeView=view;state.view=view;all('.view').forEach(n=>n.hidden=n.id!==`view-${view}`);all('.nav-btn').forEach(n=>n.classList.toggle('active',n.dataset.view===view));q('#breadcrumb-name').textContent=({galaxy:'GALASSIA',fleet:'FLOTTE',research:'RICERCA',market:'MERCATO',history:'REGISTRO'})[view];if(view==='research')renderTech();if(view==='market')renderMarket();if(view==='fleet')renderFleet();if(view==='history')renderLog();save();window.scrollTo({top:0,behavior:'smooth'})}
+  function render(){q('#cycle').textContent=nfmt(state.cycle);q('#pause-btn').textContent=state.paused?'▶ Riprendi':'Ⅱ Pausa';q('#speed-btn').textContent=state.speed+'×';renderResources();renderMap();renderDetail();renderEmpire();renderStatus();renderObjective();renderLog();if(activeView==='research')renderTech();if(activeView==='market')renderMarket();if(activeView==='fleet')renderFleet();if(activeView==='civs')renderCivs()}
+  function setView(view){if(!['galaxy','civs','fleet','research','market','history'].includes(view))return;activeView=view;state.view=view;all('.view').forEach(n=>n.hidden=n.id!==`view-${view}`);all('.nav-btn').forEach(n=>n.classList.toggle('active',n.dataset.view===view));q('#breadcrumb-name').textContent=({galaxy:'GALASSIA',civs:'CIVILTÀ',fleet:'FLOTTE',research:'RICERCA',market:'MERCATO',history:'REGISTRO'})[view];if(view==='civs')renderCivs();if(view==='research')renderTech();if(view==='market')renderMarket();if(view==='fleet')renderFleet();if(view==='history')renderLog();save();window.scrollTo({top:0,behavior:'smooth'})}
   function pan(dx,dy){state.panX+=dx;state.panY+=dy;commit()}
   function select(x,y){state.focus=key(x,y);commit()}
   function showModal(content){modalActive=true;const el=q('#modal-root');el.innerHTML=`<div class="modal">${content}</div>`;el.hidden=false}
   function closeModal(){modalActive=false;q('#modal-root').hidden=true;q('#modal-root').innerHTML=''}
   function help(){showModal(`<div class="big-icon">✧</div><h2>Come si gioca</h2><p>Guida la tua civiltà in una galassia generata proceduralmente. Non c'è un finale: l'obiettivo è espandersi e sopravvivere.</p><ol class="help-list"><li><b>Esplora</b> i settori illuminati con ✧ accanto alle tue colonie.</li><li><b>Colonizza</b> i pianeti scoperti usando energia, metallo e crediti.</li><li><b>Potenzia</b> gli impianti: ogni mondo produce risorse differenti a ogni ciclo.</li><li><b>Flotte</b>: costruisci navi specializzate e assegnale a esplorazione, ricerca, difesa, pattuglia o attacco. Il viaggio richiede cicli e puoi vederle muoversi sulla mappa.</li><li><b>Ricerca</b> tecnologie propedeutiche in esagoni e usa il <b>Mercato</b> per equilibrare l'economia.</li><li><b>Automazioni</b>: sblocca Autopilota per esplorazioni ricorrenti e l'Ambasciatrice per le miniere.</li><li><b>Flotte</b>: cerca e raggruppa le navi per pattuglie su rotte di più pianeti.</li><li><b>Costruisci scudi</b>: gli attacchi diventano più pericolosi con l'espansione.</li><li><b>Avanza i cicli</b> manualmente oppure lascia scorrere il tempo automaticamente.</li></ol><p>La partita viene salvata nel browser. Puoi esportare un backup JSON, importarlo successivamente o iniziare da zero.</p><div class="modal-actions"><button class="btn primary full" data-modal="close">Inizia a giocare →</button><div class="btn-stack"><button class="btn ghost" style="flex:1" data-modal="backup">↓ Esporta partita</button><button class="btn ghost" style="flex:1" data-modal="import">↑ Importa partita</button><button class="btn danger" style="flex:1" data-modal="reset-prompt">Nuova partita</button></div></div>`)}
   function confirmReset(){showModal(`<div class="big-icon">⚠️</div><h2>Ricominciare da zero?</h2><p>Il salvataggio corrente sarà sostituito da una nuova galassia. Per conservarlo, esporta prima un backup dal menu di aiuto.</p><div class="modal-actions"><button class="btn danger full" data-modal="reset-confirm">Sì, crea una nuova galassia</button><button class="btn ghost full" data-modal="close">Annulla</button></div>`)}
-  function reset(){state=initialState();ui.selectedShips=[];ui.routeDraft=[];ui.fleetName='';ui.routeQuery='';ui.openGroups=[];activeView='galaxy';closeModal();setView('galaxy');restartTimer();commit();alertToast('Nuova galassia creata!')}
+  function reset(){state=initialState();initializeCivs();ui.selectedShips=[];ui.routeDraft=[];ui.fleetName='';ui.routeQuery='';ui.openGroups=[];activeView='galaxy';closeModal();setView('galaxy');restartTimer();commit();alertToast('Nuova galassia creata!')}
   function backup(){const json=JSON.stringify(state,null,2);const blob=new Blob([json],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=`frontiera-infinita-save-schema${SAVE_SCHEMA}-ciclo-${state.cycle}.json`;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);alertToast('Salvataggio esportato.')}
-  async function importSave(file){if(!file)return;try{if(file.size>3000000)throw Error('Dimensione eccessiva');const result=JSON.parse(await file.text());if(!validSave(result)||Object.keys(result.sectors).length>10000)throw Error('Formato non riconosciuto');state=result;migrateSave();ui.selectedShips=[];ui.routeDraft=[];ui.fleetName='';ui.routeQuery='';ui.openGroups=[];closeModal();setView(state.view||'galaxy');restartTimer();commit();alertToast('Partita ripristinata con successo.')}catch(e){alertToast('Impossibile importare questo file di salvataggio.',true)}q('#import-file').value=''}
+  async function importSave(file){if(!file)return;try{if(file.size>3000000)throw Error('Dimensione eccessiva');const result=JSON.parse(await file.text());if(!validSave(result)||Object.keys(result.sectors).length>10000)throw Error('Formato non riconosciuto');state=result;migrateSave();ui.selectedShips=[];ui.routeDraft=[];ui.fleetName='';ui.routeQuery='';ui.openGroups=[];closeModal();initializeCivs();setView(state.view||'galaxy');restartTimer();commit();alertToast('Partita ripristinata con successo.')}catch(e){alertToast('Impossibile importare questo file di salvataggio.',true)}q('#import-file').value=''}
   function restartTimer(){lastTickAt=performance.now();if(timer)clearInterval(timer);timer=setInterval(()=>{if(!state.paused&&!modalActive)advance()},state.speed===1?3000:1500)}
   document.addEventListener('click',event=>{
     const target=event.target.closest('button');if(!target)return;
@@ -566,7 +712,8 @@
     if(target.dataset.build){buildShip(target.dataset.build);return}
     if(target.dataset.recall){recallShip(Number(target.dataset.recall));return}
     if(target.dataset.goto){state.focus=target.dataset.goto;const [x,y]=coords(state.focus);state.panX=x;state.panY=y;setView('galaxy');commit();return}
-    if(target.dataset.act){const [x,y]=state.focus.split(',').map(Number);const s=sector(x,y);({scout:discover,colonize,upgrade,mine:upgradeMine,shield:buildShield})[target.dataset.act]?.(s);return}
+    if(target.dataset.observe){const faction=state.civilizations.find(c=>c.id===Number(target.dataset.observe));if(faction){const world=faction.worlds.find(k=>state.sectors[k]?.discovered);if(world){state.focus=world;[state.panX,state.panY]=coords(world);setView('galaxy');commit()}}return}
+    if(target.dataset.act){const [x,y]=state.focus.split(',').map(Number);const s=sector(x,y);({scout:discover,colonize,upgrade,mine:upgradeMine,shield:buildShield,outpost:buildOutpost,anomaly:analyzeAnomaly})[target.dataset.act]?.(s);return}
     if(target.dataset.selectTech){selectedTech=target.dataset.selectTech;renderTech();return}
     if(target.dataset.research){research(target.dataset.research);return}
     if(target.dataset.tech){research(target.dataset.tech);return}
@@ -596,12 +743,13 @@
     if(id==='ship-type'){ui.fleetType=el.value;renderFleet()}
     if(id==='auto-explore-ship')ui.autoExploreShip=el.value;
     if(id==='auto-mine-ship')ui.autoMineShip=el.value;
+    if(id==='chronicle-filter'){state.chronicleFilter=el.value;save();renderCivs()}
   });
   window.addEventListener('resize',()=>{if(activeView==='research')paintTechLinks()});
   q('#import-file').addEventListener('change' ,e=>importSave(e.target.files?.[0]));
   document.addEventListener('keydown',e=>{if(e.key==='Escape'&&modalActive){closeModal();return}if(modalActive||/INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName))return;if(activeView==='galaxy'&&['ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.key)){e.preventDefault();const shift={ArrowUp:[0,-3],ArrowDown:[0,3],ArrowLeft:[-4,0],ArrowRight:[4,0]}[e.key];pan(...shift)}});
   window.addEventListener('beforeunload',save);
-  setView(state.view||'galaxy');render();restartTimer();save();frameId=requestAnimationFrame(animationLoop);
+  initializeCivs();for(const c of state.civilizations)if(!c.contacted){const known=c.worlds.find(k=>state.sectors[k]?.discovered);if(known)discoverAlienAt(state.sectors[known])}setView(state.view||'galaxy');render();restartTimer();save();frameId=requestAnimationFrame(animationLoop);
 })();
 </script>
 </body>
