@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#080e1c">
-  <meta name="app-version" content="1.5.0">
+  <meta name="app-version" content="1.6.0">
   <meta name="description" content="Frontiera Infinita: un gioco gestionale e strategico spaziale, gratuito e giocabile direttamente nel browser. Espandi la tua civiltà in un universo generato senza fine.">
   <title>Frontiera Infinita — Gioco strategico gestionale</title>
   <style>
@@ -100,8 +100,9 @@
       <div class="bottom-grid section-gap civ-layout"><section class="panel panel-pad"><div class="panel-head"><h2>🌐 Civiltà conosciute</h2><span class="tag">Simulazione autonoma + diplomazia</span></div><div id="civilizations-list" class="civ-grid"></div></section><section class="panel panel-pad"><div class="panel-head"><h2>📜 Cronache galattiche</h2><select id="chronicle-filter" aria-label="Filtra cronache"><option value="all">Tutti gli eventi</option><option value="birth">Nascite</option><option value="growth">Espansioni</option><option value="peace">Commercio e alleanze</option><option value="war">Guerre</option><option value="extinct">Estinzioni</option></select></div><div id="galactic-chronicle" class="chronicle-list"></div></section></div>
     </section>
     <section class="view" id="view-fleet" hidden>
-      <div class="panel panel-pad"><h2 class="wide-heading">🚀 Comando Flotte · v1.5</h2><p class="subtitle">Organizza navi individuali, forma squadre e programma rotte. Le opzioni sono sbloccate dall'albero di ricerca.</p><div id="fleet-summary"></div></div>
+      <div class="panel panel-pad"><h2 class="wide-heading">🚀 Comando Flotte · v1.6</h2><p class="subtitle">Organizza navi individuali, forma squadre e programma rotte. Le opzioni sono sbloccate dall'albero di ricerca.</p><div id="fleet-summary"></div></div>
       <section class="panel panel-pad section-gap"><h2 class="wide-heading">🛰️ Formazioni e rotte multipianeta</h2><div id="fleets-manager"></div></section>
+      <div id="naval-expansion" class="section-gap"></div>
       <section class="panel panel-pad section-gap"><h2 class="wide-heading">🤖 Centro automazioni</h2><div id="automation-manager"></div></section>
       <div class="bottom-grid fleet-layout section-gap"><section class="panel panel-pad"><h2 class="wide-heading">◈ Hangar e schieramenti</h2>
         <div class="fleet-filters"><input type="search" id="ship-query" placeholder="Cerca nome, ID o settore…" aria-label="Cerca navi"><select id="ship-filter" aria-label="Filtra per stato"><option value="all">Tutti gli stati</option><option value="idle">Disponibili</option><option value="travel">In viaggio</option><option value="station">Schierate</option><option value="fleet">In una flotta</option></select><select id="ship-type" aria-label="Filtra per classe"><option value="all">Tutte le classi</option></select></div>
@@ -112,7 +113,7 @@
     <section class="view" id="view-research" hidden><div class="panel panel-pad"><h2 class="wide-heading">⬡ Albero delle tecnologie</h2><p class="subtitle">Ogni esagono rappresenta una tecnologia: il numero indica il livello raggiunto. Le linee mostrano i prerequisiti; un esagono bloccato diventa attivo soltanto quando tutti i genitori raggiungono il livello richiesto.</p><p class="tech-scroll-hint">↔ Scorri orizzontalmente per esplorare tutti i rami della ricerca</p><div class="tech-scroll"><div id="tech-tree" class="tech-tree"></div></div><div id="tech-detail" class="tech-detail"></div></div></section>
     <section class="view" id="view-market" hidden><div class="panel panel-pad" style="margin-bottom:16px"><h2 class="wide-heading">⇄ Scambi interstellari</h2><p class="subtitle">Usa i crediti per superare le carenze temporanee. Le transazioni sono immediate e non richiedono cicli.</p></div><div class="market-grid" id="market-grid"></div></section>
     <section class="view" id="view-history" hidden><div class="panel panel-pad"><div class="panel-head"><div><h2 class="wide-heading">▤ Registro di bordo</h2><p class="subtitle">Espansioni, crisi e progressi della tua civiltà.</p></div><button class="btn tiny" id="backup-log">Esporta salvataggio</button></div><div class="log-all" id="log-all"></div></div></section>
-    <div class="footer"><span>FRONTIERA INFINITA · versione 1.5.0 · <strong>100% gratuito</strong></span><span>Nessun server · dati salvati su questo dispositivo</span></div>
+    <div class="footer"><span>FRONTIERA INFINITA · versione 1.6.0 · <strong>100% gratuito</strong></span><span>Nessun server · dati salvati su questo dispositivo</span></div>
   </main>
 </div>
 <div id="toast" class="toast" role="status" aria-live="polite"></div>
@@ -161,7 +162,12 @@
     tradeRoutes:{name:'Rotte commerciali',icon:'📦',description:'Sblocca gli accordi commerciali e aumenta i ricavi dei trattati nel tempo.',short:'Commercio · Entrate periodiche'},
     intelligence:{name:'Intelligence stellare',icon:'🕵️',description:'Sblocca missioni di spionaggio con possibilità di essere scoperte.',short:'Spionaggio · Informazioni'},
     armistice:{name:'Diritto interstellare',icon:'🕊️',description:'Riduce il costo della pace, aumenta la durata delle tregue e agevola gli accordi.',short:'Pace · Tregue più lunghe'},
-    federation:{name:'Federazioni',icon:'🌐',description:'Sblocca le alleanze difensive con partner commerciali affidabili.',short:'Alleanze · Difesa cooperativa'}
+    federation:{name:'Federazioni',icon:'🌐',description:'Sblocca le alleanze difensive con partner commerciali affidabili.',short:'Alleanze · Difesa cooperativa'},
+    modularHull:{name:'Scafi modulari',icon:'🧩',description:'Consente di configurare armi, motori, protezioni e moduli di supporto delle nuove navi.',short:'Progetti navali personalizzati'},
+    shieldHarmonics:{name:'Armoniche di scudo',icon:'🫧',description:'Migliora le configurazioni difensive delle navi e rende più efficaci gli scudi avanzati.',short:'Moduli difensivi avanzati'},
+    logistics:{name:'Logistica stellare',icon:'🧰',description:'Aumenta il raggio di rifornimento e sblocca moduli logistici per operare lontano dal nucleo imperiale.',short:'Rifornimenti · Operazioni a distanza'},
+    admiralty:{name:'Accademia Ammiragli',icon:'🎖️',description:'Permette di reclutare ammiragli con specializzazioni uniche e assegnarli alle flotte.',short:'Ammiragli · Bonus di comando'},
+    warDoctrine:{name:'Dottrina di guerra',icon:'⚔️',description:'Sblocca assetti tattici per le flotte: aggressivo, prudente o incursione.',short:'Assetti tattici di flotta'}
   };
   const SHIPS={
     scout:{name:'Sonda esploratrice',icon:'➤',roles:['explore'],unlock:{},speed:1.25,power:0,description:'Ricognizione dei sistemi ignoti. Ritorna alla base.',cost:{metal:28,energy:18,credits:18}},
@@ -175,9 +181,9 @@
   };
   const ROLES={explore:'Esplorazione',defend:'Difesa',patrol:'Pattuglia',attack:'Assalto',research:'Ricerca',return:'Rientro',upgrade:'Potenziamento miniere'};
   // Prerequisiti: il nodo figlio si attiva quando TUTTI i genitori raggiungono il livello richiesto.
-  const PREREQ={industry:{},biology:{},quantum:{},defense:{},shipyard:{industry:1},propulsion:{quantum:1},sensors:{quantum:1},weapons:{shipyard:1,defense:1},tactics:{defense:1,shipyard:1},mining:{industry:1},fleetCommand:{shipyard:2,tactics:1},patrolNetwork:{fleetCommand:1,tactics:2},autopilot:{sensors:2,propulsion:1},envoy:{mining:2,autopilot:1,shipyard:1},geo:{industry:1,sensors:1},xeno:{biology:1,sensors:1},archaeology:{quantum:2,sensors:1},outposts:{geo:1,shipyard:1},diplomacy:{xeno:1,quantum:1},tradeRoutes:{diplomacy:1,quantum:2},intelligence:{diplomacy:1,sensors:2},armistice:{diplomacy:2,defense:1},federation:{diplomacy:2,tradeRoutes:1,fleetCommand:1}};
-  const TECH_COLUMNS=[['industry','biology','quantum','defense'],['shipyard','mining','sensors','propulsion'],['weapons','tactics','autopilot'],['fleetCommand','envoy'],['patrolNetwork','geo','xeno'],['archaeology','outposts','diplomacy'],['tradeRoutes','intelligence','armistice'],['federation']];
-  const APP_VERSION='1.5.0', SAVE_SCHEMA=4;
+  const PREREQ={industry:{},biology:{},quantum:{},defense:{},shipyard:{industry:1},propulsion:{quantum:1},sensors:{quantum:1},weapons:{shipyard:1,defense:1},tactics:{defense:1,shipyard:1},mining:{industry:1},fleetCommand:{shipyard:2,tactics:1},patrolNetwork:{fleetCommand:1,tactics:2},autopilot:{sensors:2,propulsion:1},envoy:{mining:2,autopilot:1,shipyard:1},geo:{industry:1,sensors:1},xeno:{biology:1,sensors:1},archaeology:{quantum:2,sensors:1},outposts:{geo:1,shipyard:1},diplomacy:{xeno:1,quantum:1},tradeRoutes:{diplomacy:1,quantum:2},intelligence:{diplomacy:1,sensors:2},armistice:{diplomacy:2,defense:1},federation:{diplomacy:2,tradeRoutes:1,fleetCommand:1},modularHull:{shipyard:2,weapons:1},shieldHarmonics:{modularHull:1,defense:2},logistics:{outposts:1,propulsion:2},admiralty:{fleetCommand:2,diplomacy:1},warDoctrine:{admiralty:1,tactics:2,weapons:2}};
+  const TECH_COLUMNS=[['industry','biology','quantum','defense'],['shipyard','mining','sensors','propulsion'],['weapons','tactics','autopilot'],['fleetCommand','envoy','modularHull'],['patrolNetwork','geo','xeno','shieldHarmonics'],['archaeology','outposts','diplomacy','logistics'],['tradeRoutes','intelligence','armistice','admiralty'],['federation','warDoctrine']];
+  const APP_VERSION='1.6.0', SAVE_SCHEMA=5;
   const TRADES=[
     {id:'food',icon:'🌾',title:'Rifornimenti alimentari',desc:'Compra scorte per sostenere la crescita della popolazione.',cost:{credits:28},give:{food:50}},
     {id:'metal',icon:'⬡',title:'Metallo industriale',desc:'Importa metallo per espandere le colonie e costruire difese.',cost:{credits:34},give:{metal:46}},
@@ -203,11 +209,67 @@
   let recentBattles=[];
   let selectedTech='industry';
   const ui={civQuery:'',civFilter:'all',fleetFilter:'all',fleetType:'all',fleetQuery:'',selectedShips:[],fleetName:'',openGroups:[],routeDraft:[],routeQuery:'',autoExploreCount:10,autoExploreShip:'',autoMineLevel:1,autoMineShip:''};
+
+  const DESIGN_SLOTS={
+    weapon:[{id:'laser',name:'Laser',req:{},attack:0,cost:0},{id:'plasma',name:'Plasma',req:{weapons:2,modularHull:1},attack:.16,cost:.1},{id:'missile',name:'Missili',req:{weapons:4,modularHull:1},attack:.28,cost:.18}],
+    defense:[{id:'light',name:'Leggera',req:{},defense:0,cost:0},{id:'shield',name:'Scudi',req:{defense:2,shieldHarmonics:1},defense:.18,cost:.1},{id:'armor',name:'Corazzata',req:{defense:3,modularHull:1},defense:.24,cost:.14,speed:-.08}],
+    engine:[{id:'standard',name:'Standard',req:{},speed:0,cost:0},{id:'boost',name:'Boost',req:{propulsion:2,modularHull:1},speed:.18,cost:.08},{id:'warp',name:'Warp',req:{propulsion:4,logistics:1},speed:.34,cost:.16}],
+    support:[{id:'none',name:'Nessuno',req:{},cost:0},{id:'sensors',name:'Sensori',req:{sensors:2,modularHull:1},science:.18,cost:.07},{id:'logistics',name:'Logistica',req:{logistics:1},supply:1,cost:.08},{id:'command',name:'Comando',req:{admiralty:1},attack:.08,defense:.08,cost:.09}]
+  };
+  const FLEET_STANCES={balanced:{name:'Bilanciata',attack:1,defense:1,speed:1},aggressive:{name:'Aggressiva',attack:1.15,defense:.92,speed:1.05,req:{warDoctrine:1}},cautious:{name:'Prudente',attack:.92,defense:1.16,speed:.95,req:{warDoctrine:1}},raider:{name:'Incursione',attack:1.08,defense:.96,speed:1.14,req:{warDoctrine:1}}};
+  const ADMIRAL_TYPES=[
+    {id:'balanced',title:'Stratega',bonus:'Bonus equilibrato a potenza e velocità.'},
+    {id:'attack',title:'Condottiero',bonus:'Eccelle nelle offensive e nei raid.'},
+    {id:'defense',title:'Baluardo',bonus:'Potenzia la difesa di flotte e colonie.'},
+    {id:'logistics',title:'Quartermaster',bonus:'Migliora autonomia e velocità logistica.'},
+    {id:'science',title:'Analista',bonus:'Aumenta l’efficienza dei moduli sensori e delle spedizioni.'}
+  ];
+  function clone(obj){return JSON.parse(JSON.stringify(obj))}
+  function ensureNavalSystems(){
+    if(!state.shipDesigns||typeof state.shipDesigns!=='object')state.shipDesigns={};
+    Object.keys(SHIPS).forEach(type=>{if(!state.shipDesigns[type])state.shipDesigns[type]={weapon:'laser',defense:'light',engine:'standard',support:'none'}});
+    if(!Array.isArray(state.shipyardQueue))state.shipyardQueue=[];
+    if(!Array.isArray(state.admirals))state.admirals=[];
+    if(!Number.isSafeInteger(state.nextQueueId))state.nextQueueId=Math.max(0,...state.shipyardQueue.map(x=>x.id||0))+1;
+    if(!Number.isSafeInteger(state.nextAdmiralId))state.nextAdmiralId=Math.max(0,...state.admirals.map(x=>x.id||0))+1;
+    for(const ship of state.ships){if(!ship.design)ship.design=clone(state.shipDesigns[ship.type]||{weapon:'laser',defense:'light',engine:'standard',support:'none'}); if(ship.fleetId===undefined)ship.fleetId=null;}
+    for(const fleet of state.fleets){if(!fleet.stance)fleet.stance='balanced'; if(fleet.admiralId===undefined)fleet.admiralId=null;}
+    for(const adm of state.admirals){if(adm.assignedFleetId===undefined)adm.assignedFleetId=null; if(!Number.isSafeInteger(adm.level))adm.level=1; if(!Number.isFinite(adm.xp))adm.xp=0;}
+  }
+  function currentDesign(type){return state.shipDesigns[type]||{weapon:'laser',defense:'light',engine:'standard',support:'none'};}
+  function designChoice(slot,id){return DESIGN_SLOTS[slot].find(x=>x.id===id)||DESIGN_SLOTS[slot][0]}
+  function meetsReq(req){return Object.entries(req||{}).every(([k,v])=>state.tech[k]>=v)}
+  function designUnlocked(slot,id){return state.tech.modularHull>0&&meetsReq(designChoice(slot,id).req)}
+  function designOf(subject){const type=typeof subject==='string'?subject:subject.type;const design=(typeof subject==='string'?currentDesign(type):(subject.design||currentDesign(type)));return {type,design};}
+  function shipStats(subject){
+    const {type,design}=designOf(subject),base=SHIPS[type];
+    let attack=1,defense=1,speed=base.speed,cost=1,science=1,supply=0;
+    const w=designChoice('weapon',design.weapon),d=designChoice('defense',design.defense),e=designChoice('engine',design.engine),s=designChoice('support',design.support);
+    attack+=w.attack||0; defense+=d.defense||0; speed*=1+(d.speed||0)+(e.speed||0); science+=s.science||0; supply+=s.supply||0; attack+=s.attack||0; defense+=s.defense||0; cost+= (w.cost||0)+(d.cost||0)+(e.cost||0)+(s.cost||0);
+    return {type,design,powerAttack:base.power*attack,powerDefense:base.power*defense,speed:Math.max(.5,speed),science,supply,costFactor:cost,label:[w.name,d.name,e.name,s.name!=='Nessuno'?s.name:null].filter(Boolean).join(' · ')};
+  }
+  function buildCycles(type){const base=1+Math.ceil((Object.values(shipCost(type)).reduce((a,b)=>a+b,0))/95)+Math.ceil(SHIPS[type].power/18);return Math.max(1,Math.ceil(base/(1+state.tech.shipyard*.22+state.tech.modularHull*.15)))}
+  function nearestOwnedDistance(loc){const [x,y]=coords(loc);const worlds=owned();if(!worlds.length)return 0;return Math.min(...worlds.map(s=>Math.abs(s.x-x)+Math.abs(s.y-y)))}
+  function baseSupplyRange(){return 3+state.tech.logistics*2+Math.floor(state.tech.outposts/2)}
+  function admiralById(id){return state.admirals.find(a=>a.id===id)||null}
+  function admiralForFleet(f){return admiralById(f?.admiralId)}
+  function admiralBonus(adm){if(!adm)return {attack:1,defense:1,speed:1,supply:0,science:1};const lv=Math.max(1,adm.level||1),step=.03*(lv-1);if(adm.special==='attack')return {attack:1.1+step,defense:1,speed:1.03,supply:0,science:1};if(adm.special==='defense')return {attack:1,defense:1.1+step,speed:1,supply:0,science:1};if(adm.special==='logistics')return {attack:1,defense:1,speed:1.04,supply:1+Math.floor(lv/2),science:1};if(adm.special==='science')return {attack:1.02,defense:1,speed:1.02,supply:0,science:1.12+step};return {attack:1.04+step*.5,defense:1.04+step*.5,speed:1.02,supply:0,science:1.04};}
+  function fleetSupplyInfo(f){const ships=fleetShips(f);const extra=ships.length?Math.max(...ships.map(s=>shipStats(s).supply)):0;const adm=admiralForFleet(f),ab=admiralBonus(adm);const range=baseSupplyRange()+extra+(ab.supply||0);const distance=nearestOwnedDistance(f.location);let mult=1,label='Ottimale',cls='highlight';if(distance>range){mult=.84;label='Stirata';cls='warn'} if(distance>range+2){mult=.68;label='Critica';cls='warn'} return {range,distance,mult,label,cls};}
+  function cycleStance(fleetId){const f=state.fleets.find(x=>x.id===fleetId);if(!f)return;const options=Object.entries(FLEET_STANCES).filter(([id,s])=>!s.req||meetsReq(s.req)).map(([id])=>id);const idx=options.indexOf(f.stance);f.stance=options[(idx+1)%options.length]||'balanced';commit();alertToast('Assetto di '+f.name+': '+FLEET_STANCES[f.stance].name)}
+  function changeDesign(type,slot,id){if(state.tech.modularHull<1)return alertToast('Ricerca Scafi modulari per configurare le navi.',true);if(!designUnlocked(slot,id))return alertToast('Modulo non ancora disponibile.',true);state.shipDesigns[type][slot]=id;commit();alertToast('Progetto '+SHIPS[type].name+' aggiornato.')}
+  function recruitAdmiral(){if(state.tech.admiralty<1)return alertToast('Serve l’Accademia Ammiragli.',true);const cost={credits:Math.round(110+state.admirals.length*35),science:Math.round(36+state.tech.admiralty*12)};if(!transact(cost))return payError();const type=ADMIRAL_TYPES[hash(state.nextAdmiralId,state.cycle,state.seed)%ADMIRAL_TYPES.length];const names=['Aster','Vega','Lyria','Cassian','Nova','Thalos','Mira','Orion','Selene','Kael'];const surnames=['Valen','Rho','Serik','Morrow','Taris','Korr','Dael','Mercer','Dray','Nes'];const adm={id:state.nextAdmiralId++,name:names[hash(state.cycle,state.admirals.length,state.seed)%names.length]+' '+surnames[hash(state.cycle+17,state.admirals.length+9,state.seed)%surnames.length],special:type.id,title:type.title,level:1,xp:0,assignedFleetId:null};state.admirals.push(adm);log('🎖️','Nuovo ammiraglio',`${adm.name} si unisce al comando come ${type.title}.`);commit();alertToast('Ammiraglio reclutato!')}
+  function assignAdmiral(fleetId,admiralId){const f=state.fleets.find(x=>x.id===fleetId),a=state.admirals.find(x=>x.id===admiralId);if(!f||!a)return; if(a.assignedFleetId&&a.assignedFleetId!==fleetId)return alertToast('Questo ammiraglio guida già un’altra flotta.',true); if(f.admiralId){const prev=admiralById(f.admiralId); if(prev)prev.assignedFleetId=null;} f.admiralId=a.id; a.assignedFleetId=f.id; commit(); alertToast(a.name+' ora comanda '+f.name)}
+  function releaseAdmiral(id){const a=admiralById(id);if(!a)return;const f=state.fleets.find(x=>x.id===a.assignedFleetId);if(f)f.admiralId=null;a.assignedFleetId=null;commit();alertToast('Ammiraglio liberato dal comando.')}
+  function gainAdmiralXP(f,amount){const a=admiralForFleet(f);if(!a)return; a.xp+=amount; let goal=a.level*3; let up=false; while(a.xp>=goal){a.xp-=goal;a.level++;goal=a.level*3;up=true;} if(up)log('🎖️','Ammiraglio promosso',`${a.name} ha raggiunto il livello ${a.level}.`)}
+  function queueCancel(id){const idx=state.shipyardQueue.findIndex(x=>x.id===id);if(idx<0)return;const item=state.shipyardQueue[idx];state.shipyardQueue.splice(idx,1);const refund=Object.fromEntries(Object.entries(item.cost).map(([k,v])=>[k,Math.round(v*.65)]));add(refund);log('↩️','Ordine annullato',`Costruzione di ${SHIPS[item.type].name} annullata. Rimborso parziale: ${plainCost(refund)}.`);commit();}
+  function processShipyard(){ensureNavalSystems();const done=state.shipyardQueue.filter(q=>q.readyCycle<=state.cycle);state.shipyardQueue=state.shipyardQueue.filter(q=>q.readyCycle>state.cycle);for(const item of done){const id=state.nextShipId++;state.ships.push({id,type:item.type,location:'0,0',assignment:null,fleetId:null,design:item.design});log('🏭','Nave completata',`${SHIPS[item.type].name} #${id} pronta nei cantieri.`)}}
+
   function initialState(){
-    return {version:SAVE_SCHEMA,seed:Math.floor(Math.random()*2000000000),cycle:1,paused:false,speed:1,resources:{energy:160,metal:125,food:150,science:24,credits:120,relics:0},population:12,morale:86,tech:{industry:0,biology:0,quantum:0,defense:0,shipyard:0,propulsion:0,sensors:0,weapons:0,tactics:0,mining:0,fleetCommand:0,patrolNetwork:0,autopilot:0,envoy:0,geo:0,xeno:0,archaeology:0,outposts:0},ships:[{id:1,type:'scout',location:'0,0',assignment:null},{id:2,type:'interceptor',location:'0,0',assignment:null}],nextShipId:3,nextFleetId:1,missions:[],fleetTrips:[],fleets:[],automations:{explore:null,mining:null},threats:[],civilizations:[],nextCivId:1,civStarted:false,chronicle:[],chronicleFilter:'all',civArchives:[],ruins:[],sectors:{'0,0':{x:0,y:0,type:'nexus',discovered:true,owned:true,level:1,shield:1}},focus:'0,0',panX:0,panY:0,objectiveStage:0,view:'galaxy',log:[{cycle:1,icon:'🚀',title:'Una nuova civiltà',text:'La tua capitale è operativa. Esplora i settori adiacenti e costruisci un impero senza confini.'}]};
+    const shipDesigns={};Object.keys(SHIPS).forEach(type=>shipDesigns[type]={weapon:'laser',defense:'light',engine:'standard',support:'none'});
+    return {version:SAVE_SCHEMA,seed:Math.floor(Math.random()*2000000000),cycle:1,paused:false,speed:1,resources:{energy:160,metal:125,food:150,science:24,credits:120,relics:0},population:12,morale:86,tech:{industry:0,biology:0,quantum:0,defense:0,shipyard:0,propulsion:0,sensors:0,weapons:0,tactics:0,mining:0,fleetCommand:0,patrolNetwork:0,autopilot:0,envoy:0,geo:0,xeno:0,archaeology:0,outposts:0,diplomacy:0,tradeRoutes:0,intelligence:0,armistice:0,federation:0,modularHull:0,shieldHarmonics:0,logistics:0,admiralty:0,warDoctrine:0},ships:[{id:1,type:'scout',location:'0,0',assignment:null,design:{weapon:'laser',defense:'light',engine:'standard',support:'none'},fleetId:null},{id:2,type:'interceptor',location:'0,0',assignment:null,design:{weapon:'laser',defense:'light',engine:'standard',support:'none'},fleetId:null}],nextShipId:3,nextFleetId:1,nextQueueId:1,nextAdmiralId:1,missions:[],fleetTrips:[],fleets:[],shipyardQueue:[],admirals:[],shipDesigns,automations:{explore:null,mining:null},threats:[],civilizations:[],nextCivId:1,civStarted:false,chronicle:[],chronicleFilter:'all',civArchives:[],ruins:[],sectors:{'0,0':{x:0,y:0,type:'nexus',discovered:true,owned:true,level:1,shield:1}},focus:'0,0',panX:0,panY:0,objectiveStage:0,view:'galaxy',log:[{cycle:1,icon:'🚀',title:'Una nuova civiltà',text:'La tua capitale è operativa. Esplora i settori adiacenti e costruisci un impero senza confini.'}]};
   }
   function validSave(s){
-    if(!s||![1,2,3,SAVE_SCHEMA].includes(s.version)||!Number.isSafeInteger(s.seed)||!s.resources||!s.tech||!s.sectors||!s.sectors['0,0']||!Array.isArray(s.log)||s.log.length>85)return false;
+    if(!s||![1,2,3,4,SAVE_SCHEMA].includes(s.version)||!Number.isSafeInteger(s.seed)||!s.resources||!s.tech||!s.sectors||!s.sectors['0,0']||!Array.isArray(s.log)||s.log.length>85)return false;
     if(!Object.keys(RESOURCE).filter(k=>k!=='relics'||s.version===SAVE_SCHEMA).every(k=>Number.isFinite(s.resources[k])&&s.resources[k]>=0))return false;
     if(!['industry','biology','quantum','defense'].every(k=>Number.isSafeInteger(s.tech[k])&&s.tech[k]>=0&&s.tech[k]<10000))return false;
     if(!Object.keys(TECH).filter(k=>!['industry','biology','quantum','defense'].includes(k)).every(k=>s.tech[k]===undefined||(Number.isSafeInteger(s.tech[k])&&s.tech[k]>=0&&s.tech[k]<10000)))return false;
@@ -224,13 +286,19 @@
     if(s.ruins!==undefined&&(!Array.isArray(s.ruins)||s.ruins.length>260||!s.ruins.every(r=>r&&typeof r.at==='string'&&/^-?\d+,-?\d+$/.test(r.at)&&typeof r.name==='string'&&r.name.length<70)))return false;
     if(s.civArchives!==undefined&&(!Array.isArray(s.civArchives)||s.civArchives.length>250))return false;
     if(s.version===SAVE_SCHEMA&&s.civilizations?.some(c=>!c.diplomacy||!Number.isFinite(c.diplomacy.opinion)||Math.abs(c.diplomacy.opinion)>100||!Number.isSafeInteger(c.diplomacy.lastAction)||!Number.isSafeInteger(c.diplomacy.tradeUntil)||!Number.isSafeInteger(c.diplomacy.napUntil)||!Number.isSafeInteger(c.diplomacy.allianceUntil)||!Number.isSafeInteger(c.diplomacy.ceasefireUntil)||typeof c.diplomacy.war!=='object'))return false;
+    if(s.version===SAVE_SCHEMA){
+      if(!s.shipDesigns||typeof s.shipDesigns!=='object'||!Array.isArray(s.shipyardQueue)||s.shipyardQueue.length>60||!Array.isArray(s.admirals)||s.admirals.length>25)return false;
+      if(!s.shipyardQueue.every(j=>j&&Number.isSafeInteger(j.id)&&SHIPS[j.type]&&Number.isSafeInteger(j.startCycle)&&Number.isSafeInteger(j.readyCycle)&&j.readyCycle>j.startCycle&&j.design&&Object.keys(DESIGN_SLOTS).every(slot=>DESIGN_SLOTS[slot].some(m=>m.id===j.design[slot]))))return false;
+      if(!s.admirals.every(a=>a&&Number.isSafeInteger(a.id)&&typeof a.name==='string'&&a.name.length<60&&Number.isSafeInteger(a.level)&&a.level>=1&&a.level<=100000&&Number.isFinite(a.xp)))return false;
+      if(!s.ships.every(ship=>ship.design&&Object.keys(DESIGN_SLOTS).every(slot=>DESIGN_SLOTS[slot].some(m=>m.id===ship.design[slot]))))return false;
+    }
     if(!s.sectors['0,0'].owned||s.sectors['0,0'].type!=='nexus'||!s.sectors['0,0'].discovered)return false;
     return s.log.every(l=>l&&typeof l.title==='string'&&typeof l.text==='string'&&typeof l.icon==='string'&&Number.isSafeInteger(l.cycle));
   }
   try{const raw=localStorage.getItem(STORE);state=raw?JSON.parse(raw):initialState();if(!validSave(state)||Object.keys(state.sectors).length>10000)state=initialState()}catch(e){state=initialState()}
   function migrateSave(){
     Object.keys(TECH).forEach(id=>{if(!Number.isSafeInteger(state.tech[id]))state.tech[id]=0});
-    if(!Array.isArray(state.ships))state.ships=[{id:1,type:'scout',location:'0,0',assignment:null},{id:2,type:'interceptor',location:'0,0',assignment:null}];
+    if(!Array.isArray(state.ships))state.ships=[{id:1,type:'scout',location:'0,0',assignment:null,design:{weapon:'laser',defense:'light',engine:'standard',support:'none'},fleetId:null},{id:2,type:'interceptor',location:'0,0',assignment:null,design:{weapon:'laser',defense:'light',engine:'standard',support:'none'},fleetId:null}];
     if(!Array.isArray(state.missions))state.missions=[];
     if(!Array.isArray(state.threats))state.threats=[];
     if(!Number.isFinite(state.resources.relics))state.resources.relics=0;
@@ -249,8 +317,8 @@
     for(const ship of state.ships){if(ship.fleetId===undefined)ship.fleetId=null}
     for(const world of Object.values(state.sectors))if(!Number.isSafeInteger(world.mineLevel))world.mineLevel=0;
     if(!Number.isSafeInteger(state.nextShipId))state.nextShipId=Math.max(0,...state.ships.map(x=>x.id))+1;
-    // Le tecnologie già ottenute nelle vecchie partite non vengono bloccate dalla nuova struttura.
     if(state.version===1){let change=true;while(change){change=false;for(const [id,requirements] of Object.entries(PREREQ))if(state.tech[id]>0){for(const [parent,level] of Object.entries(requirements))if(state.tech[parent]<level){state.tech[parent]=level;change=true}}}}
+    ensureNavalSystems();
     state.version=SAVE_SCHEMA;
     state.focus=typeof state.focus==='string'&&/^-?\d+,-?\d+$/.test(state.focus)?state.focus:'0,0';
     state.speed=state.speed===2?2:1;state.paused=!!state.paused;
@@ -832,8 +900,8 @@
     const groups=Object.entries(SHIPS).map(([type,info])=>({type,info,items:visible.filter(s=>s.type===type)})).filter(g=>g.items.length);
     q('#ships-list').innerHTML=`<div class="group-stack">${groups.map(g=>`<details data-ship-group="${g.type}" ${groups.length===1||ui.openGroups.includes(g.type)||ui.selectedShips.some(id=>g.items.some(s=>s.id===id))?'open':''}><summary>${g.info.icon} ${esc(g.info.name)} <small>× ${g.items.length}</small></summary>${g.items.map(ship=>{const flight=state.missions.find(m=>m.shipId===ship.id),f=state.fleets.find(f=>f.id===ship.fleetId),busy=!!flight,location=sector(...coords(ship.location));const progress=flight?clamp((state.cycle-flight.startCycle)/(flight.endCycle-flight.startCycle)*100,0,100):0;
       const orders=f?`<p>🚀 Assegnata a ${esc(f.name)}</p>`:busy?`<div class="progress"><span style="width:${progress}%"></span></div><p>⏳ ${ROLES[flight.role]} verso ${esc(systemName(sector(...coords(flight.to))))} · ${flight.endCycle-state.cycle} cicli</p>`:ship.assignment?`<p>🛡️ ${ROLES[ship.assignment]} assegnata · protezione ${SHIPPOWER(ship,ship.assignment)}</p><div class="ship-actions"><button class="btn" data-recall="${ship.id}">↩ Richiama</button></div>`:`<div class="ship-actions">${g.info.roles.filter(r=>r!=='upgrade').map(role=>{const ok=role==='explore'?isReachable(focus)&&!focus.discovered&&!missionFor(target,'explore'):role==='attack'?focus.discovered&&hostile(focus)&&!missionFor(target,'attack'):role==='research'?focus.discovered:focus.owned;return `<button class="btn ${role==='attack'?'danger':'primary'}" data-send="${ship.id}|${role}" ${ok?'':'disabled'}>${ROLES[role]} → bersaglio</button>`}).join('')}</div>`;
-      return `<div class="ship-card">${canForm&&!busy&&!ship.assignment&&!ship.fleetId&&SHIPS[ship.type].power>0?`<label class="unit-select"><input type="checkbox" data-fleet-ship="${ship.id}" ${ui.selectedShips.includes(ship.id)?'checked':''}> Aggiungi alla nuova formazione</label>`:''}<h3>${g.info.icon} ${esc(g.info.name)} <span class="small muted">#${ship.id}</span></h3><div class="small muted">${esc(systemName(location))} (${ship.location}) · Potenza ${SHIPPOWER(ship,ship.assignment||'attack')}</div>${orders}</div>`}).join('')}</details>`).join('')}</div>${!groups.length?'<div class="empty-state">Nessuna nave corrisponde ai filtri.</div>':''}`;
-    q('#shipyard-list').innerHTML=Object.entries(SHIPS).map(([id,info])=>{const unlocked=shipUnlocked(id),requires=Object.entries(info.unlock).map(([tech,level])=>`${TECH[tech].name} L${level}`).join(' · '),cost=shipCost(id);return `<div class="ship-card"><h3>${info.icon} ${esc(info.name)}</h3><p>${esc(info.description)}</p><div class="small muted">Ruoli: ${info.roles.map(x=>ROLES[x]).join(', ')} · Potenza ${info.power} · Velocità ${info.speed}×</div><div style="margin:9px 0">${unlocked?costHTML(cost):`<span class="tag warn">🔒 ${esc(requires)}</span>`}</div><button class="btn ${unlocked?'primary':'ghost'} full" data-build="${id}" ${unlocked?'':'disabled'}${unlocked?affordButton(cost):''}>${unlocked?'🏭 Costruisci nave':'Tecnologie da sbloccare'}</button></div>`}).join('');
+      return `<div class="ship-card">${canForm&&!busy&&!ship.assignment&&!ship.fleetId&&SHIPS[ship.type].power>0?`<label class="unit-select"><input type="checkbox" data-fleet-ship="${ship.id}" ${ui.selectedShips.includes(ship.id)?'checked':''}> Aggiungi alla nuova formazione</label>`:''}<h3>${g.info.icon} ${esc(g.info.name)} <span class="small muted">#${ship.id}</span></h3><div class="small muted">${esc(systemName(location))} (${ship.location}) · Potenza ${SHIPPOWER(ship,ship.assignment||'attack')} · ${esc(shipStats(ship).label)}</div>${orders}</div>`}).join('')}</details>`).join('')}</div>${!groups.length?'<div class="empty-state">Nessuna nave corrisponde ai filtri.</div>':''}`;
+    q('#shipyard-list').innerHTML=Object.entries(SHIPS).map(([id,info])=>{const unlocked=shipUnlocked(id),requires=Object.entries(info.unlock).map(([tech,level])=>`${TECH[tech].name} L${level}`).join(' · '),cost=shipCost(id);return `<div class="ship-card"><h3>${info.icon} ${esc(info.name)}</h3><p>${esc(info.description)}</p><div class="small muted">Ruoli: ${info.roles.map(x=>ROLES[x]).join(', ')} · Attacco ${Math.round(shipStats(id).powerAttack)} · Velocità ${shipStats(id).speed.toFixed(2)}×</div><div style="margin:9px 0">${unlocked?costHTML(cost):`<span class="tag warn">🔒 ${esc(requires)}</span>`}</div><button class="btn ${unlocked?'primary':'ghost'} full" data-build="${id}" ${unlocked?'':'disabled'}${unlocked?affordButton(cost):''}>${unlocked?'🏭 Metti in coda':'Tecnologie da sbloccare'}</button></div>`}).join('');
     q('#fleet-missions').innerHTML=[...state.threats.map(t=>`<div class="ship-card"><h3>🚨 Incursione verso ${esc(systemName(sector(...coords(t.target))))}</h3><p>Potenza ostile ${t.power} · Difesa ${localDefense(t.target)} · Impatto tra ${t.endCycle-state.cycle} cicli</p><button class="btn primary" data-goto="${t.target}">🛡️ Difendi</button></div>`),...state.fleetTrips.map(t=>{const f=state.fleets.find(f=>f.id===t.fleetId);return `<div class="ship-card"><h3>🚀 ${esc(f?.name||'Flotta')} · ${ROLES[t.role]}</h3><p>Da ${t.from} a ${t.to} · arrivo tra ${t.endCycle-state.cycle} cicli</p></div>`}),...state.missions.map(m=>{const ship=state.ships.find(s=>s.id===m.shipId);return `<div class="ship-card"><h3>🚀 ${ship?SHIPS[ship.type].name:'Nave'} · ${ROLES[m.role]}</h3><p>Da ${m.from} a ${m.to} · arrivo tra ${m.endCycle-state.cycle} cicli</p></div>`})].join('')||'<div class="empty-state">Nessuna missione o incursione attiva.</div>';
     if(focusId){const el=q('#'+focusId);if(el){el.focus({preventScroll:true});if(focusStart!==null&&el.setSelectionRange)el.setSelectionRange(focusStart,focusStart)}}
   }
@@ -859,13 +927,220 @@
     svg.setAttribute('viewBox',`0 0 ${tree.clientWidth} ${tree.clientHeight}`);svg.innerHTML=links.join('');
   }
   function renderMarket(){q('#market-grid').innerHTML=TRADES.map(t=>`<article class="trade-card"><div class="trade-ico">${t.icon}</div><h3>${t.title}</h3><p>${t.desc}</p><div class="small muted">OTTIENI</div><div style="margin:8px 0 14px" class="cost">${Object.entries(t.give).map(([k,v])=>`<span style="color:var(--good)">+${nfmt(v)} ${RESOURCE[k]?.name||k}</span>`).join('')}</div><div class="sep" style="margin:0 0 13px"></div><div class="small muted">COSTO</div><div style="margin:8px 0 12px">${costHTML(t.cost)}</div><div class="tech-foot"><span class="small muted">Transazione istantanea</span><button class="btn primary" data-trade="${t.id}"${affordButton(t.cost)}>Scambia ⇄</button></div></article>`).join('')}
-  function render(){q('#cycle').textContent=nfmt(state.cycle);q('#pause-btn').textContent=state.paused?'▶ Riprendi':'Ⅱ Pausa';q('#speed-btn').textContent=state.speed+'×';renderResources();renderMap();renderDetail();renderEmpire();renderStatus();renderObjective();renderLog();if(activeView==='research')renderTech();if(activeView==='market')renderMarket();if(activeView==='fleet')renderFleet();if(activeView==='civs')renderCivs()}
-  function setView(view){if(!['galaxy','civs','fleet','research','market','history'].includes(view))return;activeView=view;state.view=view;all('.view').forEach(n=>n.hidden=n.id!==`view-${view}`);all('.nav-btn').forEach(n=>n.classList.toggle('active',n.dataset.view===view));q('#breadcrumb-name').textContent=({galaxy:'GALASSIA',civs:'CIVILTÀ',fleet:'FLOTTE',research:'RICERCA',market:'MERCATO',history:'REGISTRO'})[view];if(view==='civs')renderCivs();if(view==='research')renderTech();if(view==='market')renderMarket();if(view==='fleet')renderFleet();if(view==='history')renderLog();save();window.scrollTo({top:0,behavior:'smooth'})}
+  // v1.6 Supremazia Stellare: cantieri, scafi modulari, ammiragli, tattiche e logistica.
+  function shipCost(type){
+    const stats=shipStats(type),discount=Math.max(.7,1-state.tech.shipyard*.05);
+    return Object.fromEntries(Object.entries(SHIPS[type].cost).map(([k,v])=>[k,Math.ceil(v*discount*stats.costFactor)]));
+  }
+  function travelCycles(from,to,ship){
+    const [a,b]=coords(from),[x,y]=coords(to),steps=Math.abs(a-x)+Math.abs(b-y);
+    return Math.max(1,Math.ceil((1+steps*1.55)/(shipStats(ship).speed*(1+state.tech.propulsion*.19))));
+  }
+  function SHIPPOWER(ship,role){
+    const st=shipStats(ship);
+    return Math.round((role==='attack'?st.powerAttack:st.powerDefense)*(role==='attack'?1+state.tech.weapons*.22:1+state.tech.defense*.10)*(role==='patrol'?1+state.tech.tactics*.13:1));
+  }
+  function fleetSupplyInfo(f,target=f.location){
+    const units=fleetShips(f),modules=units.length?Math.max(...units.map(s=>shipStats(s).supply)):0;
+    const range=baseSupplyRange()+modules+admiralBonus(admiralForFleet(f)).supply;
+    const dist=nearestOwnedDistance(target);
+    const multiplier=dist>range+3?.62:dist>range?.82:1;
+    return {range,dist,multiplier,status:dist>range+3?'Critica':dist>range?'Limitata':'Ottimale'};
+  }
+  function fleetPower(f,role='defend',at=f.location){
+    const base=fleetShips(f).reduce((sum,s)=>sum+SHIPPOWER(s,role),0);
+    const stance=FLEET_STANCES[f.stance]||FLEET_STANCES.balanced;
+    const admiral=admiralBonus(admiralForFleet(f));
+    const modifier=(role==='attack'?stance.attack*admiral.attack:stance.defense*admiral.defense);
+    return Math.round(base*modifier*fleetSupplyInfo(f,at).multiplier);
+  }
+  function localDefense(target){
+    const world=sector(...coords(target));let total=8+state.tech.defense*6+world.shield*9;
+    for(const ship of state.ships){if(ship.fleetId||!ship.assignment||flying(ship))continue;
+      const [x,y]=coords(ship.location),[tx,ty]=coords(target),d=Math.abs(x-tx)+Math.abs(y-ty);
+      if(ship.assignment==='defend'&&d===0)total+=SHIPPOWER(ship,'defend');
+      if(ship.assignment==='patrol'&&d<=1)total+=SHIPPOWER(ship,'patrol')*(d===0?1:.65);
+    }
+    for(const f of state.fleets){if(!fleetShips(f).length)continue;
+      if(f.mode==='defend'&&f.location===target)total+=fleetPower(f,'defend',target);
+      if(f.mode==='patrol'&&f.route.includes(target))total+=fleetPower(f,'patrol',target)*(.5+Math.min(.24,state.tech.patrolNetwork*.04));
+    }
+    return Math.round(total);
+  }
+  function buildShip(type){
+    if(!SHIPS[type]||!shipUnlocked(type))return alertToast('Ricerca navale insufficiente.',true);
+    if(state.ships.length+state.shipyardQueue.length>=300)return alertToast('Hangar e cantieri al limite di 300 unità.',true);
+    if(state.shipyardQueue.length>=60)return alertToast('Coda piena: massimo 60 ordini.',true);
+    const cost=shipCost(type);if(!transact(cost))return payError();
+    const last=state.shipyardQueue.at(-1);
+    const start=Math.max(state.cycle,last?.readyCycle||state.cycle);
+    const order={id:state.nextQueueId++,type,design:clone(currentDesign(type)),cost,startCycle:start,readyCycle:start+buildCycles(type)};
+    state.shipyardQueue.push(order);
+    log('🏭','Costruzione avviata',`${SHIPS[type].name}: completamento previsto al ciclo ${order.readyCycle}.`);
+    commit();alertToast('Costruzione inserita nella coda dei cantieri.');
+  }
+  function processShipyard(){
+    const ready=state.shipyardQueue.filter(x=>x.readyCycle<=state.cycle);
+    state.shipyardQueue=state.shipyardQueue.filter(x=>x.readyCycle>state.cycle);
+    for(const job of ready){const id=state.nextShipId++;
+      state.ships.push({id,type:job.type,location:'0,0',assignment:null,fleetId:null,design:clone(job.design)});
+      log('🏗️','Nave completata',`${SHIPS[job.type].name} #${id} è disponibile nell’hangar.`);
+    }
+  }
+  function cancelBuild(id){
+    const i=state.shipyardQueue.findIndex(j=>j.id===id);if(i<0)return;
+    const [job]=state.shipyardQueue.splice(i,1);
+    add(Object.fromEntries(Object.entries(job.cost).map(([k,v])=>[k,Math.floor(v*.75)])));
+    let last=state.cycle;
+    for(const remaining of state.shipyardQueue){const duration=remaining.readyCycle-remaining.startCycle;remaining.startCycle=last;remaining.readyCycle=last+duration;last=remaining.readyCycle;}
+    log('↩️','Cantiere: ordine annullato',`${SHIPS[job.type].name}: rimborso del 75% delle risorse.`);
+    commit();
+  }
+  function updateBlueprint(type,slot,id){
+    if(!SHIPS[type]||!DESIGN_SLOTS[slot]?.some(o=>o.id===id))return;
+    if(state.tech.modularHull<1||!meetsReq(designChoice(slot,id).req))return alertToast('Devi prima sbloccare il modulo nell’albero tecnologico.',true);
+    currentDesign(type)[slot]=id;
+    commit();alertToast('Progetto aggiornato: le navi già costruite non cambiano.');
+  }
+  function fleetTravel(f,destination,role){
+    if(fleetBusy(f)||!fleetShips(f).length||f.location===destination)return false;
+    const base=Math.max(...fleetShips(f).map(s=>travelCycles(f.location,destination,s)));
+    const stance=FLEET_STANCES[f.stance]||FLEET_STANCES.balanced;
+    const adm=admiralBonus(admiralForFleet(f));
+    const supply=fleetSupplyInfo(f,destination);
+    const cycles=Math.max(1,Math.ceil(base/(stance.speed*adm.speed*(.6+.4*supply.multiplier))));
+    state.fleetTrips.push({fleetId:f.id,from:f.location,to:destination,role,startCycle:state.cycle,endCycle:state.cycle+cycles});
+    return true;
+  }
+  function createFleet(){
+    if(state.tech.fleetCommand<1)return alertToast('Sblocca Comando flotte nella ricerca.',true);
+    const picks=state.ships.filter(s=>ui.selectedShips.includes(s.id)&&!s.fleetId&&!flying(s)&&!s.assignment&&SHIPS[s.type].power>0);
+    if(picks.length<2)return alertToast('Seleziona almeno due navi da combattimento disponibili.',true);
+    if(picks.length>3+state.tech.fleetCommand*2)return alertToast('Ricerca Comando flotte per avere formazioni più grandi.',true);
+    if(picks.some(s=>s.location!==picks[0].location))return alertToast('Le navi devono trovarsi nello stesso settore.',true);
+    const id=state.nextFleetId++,name=ui.fleetName.trim().slice(0,35)||'Flotta '+id;
+    state.fleets.push({id,name,shipIds:picks.map(s=>s.id),location:picks[0].location,route:[],routeIndex:0,mode:'idle',stance:'balanced',admiralId:null});
+    for(const ship of picks)ship.fleetId=id;
+    ui.selectedShips=[];ui.fleetName='';log('🚀','Formazione creata',`${name}: ${picks.length} navi coordinate.`);commit();alertToast('Flotta creata!');
+  }
+  function disbandFleet(id){
+    const f=state.fleets.find(f=>f.id===id);
+    if(!f||fleetBusy(f))return alertToast('Attendi la fine della missione prima di sciogliere la flotta.',true);
+    const adm=admiralForFleet(f);if(adm)adm.assignedFleetId=null;
+    for(const ship of fleetShips(f)){ship.fleetId=null;ship.assignment=null;}
+    state.fleets=state.fleets.filter(x=>x.id!==id);
+    log('↩️','Flotta sciolta',`${f.name}: unità restituite all’hangar.`);commit();
+  }
+  function progressFleetTrips(){
+    const arrived=state.fleetTrips.filter(t=>t.endCycle<=state.cycle);
+    state.fleetTrips=state.fleetTrips.filter(t=>t.endCycle>state.cycle);
+    for(const trip of arrived){const f=state.fleets.find(x=>x.id===trip.fleetId);if(!f)continue;
+      f.location=trip.to;for(const ship of fleetShips(f))ship.location=trip.to;
+      if(trip.role==='attack'){
+        const s=stored(...coords(trip.to)),enemy=14+distance(s)*3+hash(s.x,s.y,state.seed+523)%12;
+        const power=fleetPower(f,'attack',trip.to);
+        if(power>=enemy){s.cleared=true;state.resources.credits+=30+distance(s)*9;state.resources.science+=12;gainAdmiralXP(f,2);
+          log('💥','Assalto coordinato riuscito',`${f.name} ha liberato ${systemName(s)}: ${power} contro ${enemy}.`);
+        }else{const loss=Math.min(60,Math.ceil((enemy-power)*1.3));state.resources.metal=Math.max(0,state.resources.metal-loss);gainAdmiralXP(f,1);
+          log('⚠️','Assalto respinto',`${f.name} respinta da ${systemName(s)}: riparazioni -${loss} metallo.`);}
+        f.mode='idle';
+      }else if(f.mode==='patrol'&&f.route.length>1){f.routeIndex=(f.route.indexOf(trip.to)+1)%f.route.length;gainAdmiralXP(f,.35);}
+      else if(f.mode==='defend'){gainAdmiralXP(f,.2);log('🛡️','Flotta schierata',`${f.name} difende ${systemName(sector(...coords(trip.to)))}.`);}
+    }
+  }
+  function cycleStance(id){
+    const f=state.fleets.find(x=>x.id===id);if(!f)return;
+    if(state.tech.warDoctrine<1)return alertToast('Sblocca Dottrina di guerra.',true);
+    const options=Object.keys(FLEET_STANCES),next=(options.indexOf(f.stance)+1)%options.length;
+    f.stance=options[next];commit();alertToast('Nuovo assetto: '+FLEET_STANCES[f.stance].name);
+  }
+  function recruitAdmiral(){
+    if(state.tech.admiralty<1)return alertToast('Sblocca Accademia Ammiragli.',true);
+    if(state.admirals.length>=25)return alertToast('Limite di 25 ammiragli raggiunto.',true);
+    const cost={credits:95+35*state.admirals.length,science:45};if(!transact(cost))return payError();
+    const id=state.nextAdmiralId++;
+    const first=['Astra','Mira','Vega','Selen','Orion','Kael','Tharos','Nova','Lyria','Taris'];
+    const last=['Valen','Rho','Drax','Serik','Korr','Dael','Nes','Corin','Daran','Voss'];
+    const spec=ADMIRAL_TYPES[hash(id,state.cycle)%ADMIRAL_TYPES.length];
+    const adm={id,name:first[hash(id,13)%first.length]+' '+last[hash(id,23)%last.length],special:spec.id,level:1,xp:0,assignedFleetId:null};
+    state.admirals.push(adm);log('🎖️','Ammiraglio reclutato',`${adm.name}: ${spec.title}.`);commit();alertToast('Nuovo ammiraglio disponibile.');
+  }
+  function assignAdmiral(fleetId,admiralId){
+    const f=state.fleets.find(x=>x.id===fleetId);if(!f)return;
+    if(admiralId===0){const former=admiralForFleet(f);if(former)former.assignedFleetId=null;f.admiralId=null;commit();return;}
+    const adm=state.admirals.find(x=>x.id===admiralId);if(!adm||adm.assignedFleetId&&adm.assignedFleetId!==fleetId)return;
+    const former=admiralForFleet(f);if(former)former.assignedFleetId=null;
+    adm.assignedFleetId=fleetId;f.admiralId=admiralId;commit();alertToast(adm.name+' assegnato alla flotta.');
+  }
+  function gainAdmiralXP(f,points){const a=admiralForFleet(f);if(!a)return;
+    a.xp+=points;while(a.xp>=a.level*4){a.xp-=a.level*4;a.level++;log('🎖️','Promozione ammiraglio',`${a.name} raggiunge il livello ${a.level}.`);}
+  }
+  function advance(){
+    state.cycle++;const pr=production();Object.entries(pr).forEach(([k,v])=>state.resources[k]=Math.max(0,state.resources[k]+v));
+    if(state.resources.food<.01){state.morale=clamp(state.morale-2.6,0,100);if(state.cycle%5===0&&state.population>2){state.population--;log('🥀','Carenza alimentare','Un cittadino ha abbandonato la colonia. Aumenta la produzione di cibo.')}}
+    else if(state.cycle%4===0)state.morale=clamp(state.morale+.8,0,100);
+    if(state.cycle%7===0&&state.resources.food>20&&state.population<capacity()&&state.morale>44)state.population++;
+    if(state.cycle%11===0)randomEvent();simulateCivilizations();processDiplomacy();progressMissions();progressFleetTrips();processShipyard();processAutomations();
+    if(state.cycle%17===13)scheduleRaid();resolveRaids();checkObjective();lastTickAt=performance.now();commit();
+  }
+  function renderNavalExpansion(){
+    const root=q('#naval-expansion');if(!root)return;
+    const known=state.fleets.map(f=>{
+      const adm=admiralForFleet(f),supply=fleetSupplyInfo(f),stance=FLEET_STANCES[f.stance]||FLEET_STANCES.balanced;
+      const buttons=state.admirals.filter(a=>!a.assignedFleetId||a.assignedFleetId===f.id).map(a=>`<button class="btn tiny" data-assign-admiral="${f.id}|${a.id}">${esc(a.name)} (L${a.level})</button>`).join('');
+      return `<article class="ship-card"><div class="fleet-head"><h3>${esc(f.name)}</h3><span class="tag ${supply.multiplier<1?'warn':'highlight'}">Rifornimenti ${supply.status}</span></div>
+        <div class="facts"><span class="tag">⚔️ ${fleetPower(f,'attack')}</span><span class="tag">🛡️ ${fleetPower(f,'defend')}</span><span class="tag">📦 ${supply.dist}/${supply.range}</span></div>
+        <p class="small muted">Assetto: ${stance.name} · ${adm?'🎖️ '+esc(adm.name)+' L'+adm.level:'Nessun ammiraglio'}</p>
+        <div class="ship-actions"><button class="btn" data-cycle-stance="${f.id}" ${state.tech.warDoctrine?'':'disabled'}>🧭 Cambia tattica</button>${adm?`<button class="btn ghost" data-assign-admiral="${f.id}|0">Rimuovi ammiraglio</button>`:''}</div>
+        ${state.tech.admiralty>0?`<div class="facts" style="margin-top:10px">${buttons||'<span class="small muted">Nessun ammiraglio libero</span>'}</div>`:''}
+      </article>`;
+    }).join('');
+    const free=state.admirals.filter(a=>!a.assignedFleetId);
+    const admirals=state.admirals.map(a=>{
+      const profile=ADMIRAL_TYPES.find(t=>t.id===a.special);
+      return `<div class="ship-card"><b>🎖️ ${esc(a.name)} · L${a.level}</b><p class="small muted">${esc(profile?.title||a.special)} — ${esc(profile?.bonus||'')}</p><div class="progress"><span style="width:${clamp(a.xp/(a.level*4)*100,0,100)}%"></span></div><p class="small muted">Esperienza ${a.xp.toFixed(1)}/${a.level*4} · ${a.assignedFleetId?'In servizio':'Disponibile'}</p></div>`;
+    }).join('');
+    const shipTypes=Object.entries(SHIPS).filter(([t])=>!['envoy','scout'].includes(t));
+    const designer=shipTypes.map(([type,spec])=>{
+      const design=currentDesign(type),stats=shipStats(type),unlocked=shipUnlocked(type);
+      return `<details data-naval-group="${type}" ${ui.navalOpenGroups?.includes(type)?'open':''} class="ship-card"><summary><b>${spec.icon} ${esc(spec.name)}</b> · ⚔️ ${Math.round(stats.powerAttack)} · 🛡️ ${Math.round(stats.powerDefense)}</summary>
+        <div class="small muted" style="margin:8px 0">Le nuove navi utilizzeranno questa configurazione. Le unità esistenti mantengono i loro moduli.</div>
+        ${Object.entries(DESIGN_SLOTS).map(([slot,options])=>`<div style="margin:10px 0"><b class="small">${({weapon:'Armamento',defense:'Protezione',engine:'Propulsione',support:'Modulo speciale'})[slot]}</b><div class="facts" style="margin-top:5px">${options.map(opt=>{
+          const ready=state.tech.modularHull>0&&meetsReq(opt.req),selected=design[slot]===opt.id;
+          return `<button class="btn tiny ${selected?'primary':'ghost'}" data-design="${type}|${slot}|${opt.id}" ${ready?'':'disabled'} title="${ready?'Disponibile':'Richiede: '+Object.entries({...opt.req,modularHull:1}).map(([k,v])=>TECH[k].name+' L'+v).join(', ')}">${selected?'✓ ':''}${esc(opt.name)}</button>`;
+        }).join('')}</div></div>`).join('')}
+        <div class="facts"><span class="tag">⚔️ ${Math.round(stats.powerAttack)}</span><span class="tag">🛡️ ${Math.round(stats.powerDefense)}</span><span class="tag">💫 ${stats.speed.toFixed(2)}×</span><span class="tag">Costo ×${stats.costFactor.toFixed(2)}</span></div>
+        <button class="btn primary" data-build="${type}" ${unlocked&&state.ships.length+state.shipyardQueue.length<300&&state.shipyardQueue.length<60&&canPay(shipCost(type))?'':'disabled'}>🏭 Costruisci (${buildCycles(type)} cicli)</button>
+      </details>`;
+    }).join('');
+    const queue=state.shipyardQueue.map((order,i)=>{
+      const st=shipStats({type:order.type,design:order.design});
+      return `<div class="ship-card"><div class="fleet-head"><b>${i+1}. ${esc(SHIPS[order.type].name)}</b><span class="tag">${Math.max(0,order.readyCycle-state.cycle)} cicli</span></div><p class="small muted">${esc(st.label)} · Consegna al ciclo ${order.readyCycle}</p><div class="progress"><span style="width:${clamp((state.cycle-order.startCycle)/(order.readyCycle-order.startCycle)*100,0,100)}%"></span></div><button class="btn tiny ghost" data-cancel-build="${order.id}">Annulla (rimborso 75%)</button></div>`;
+    }).join('');
+    root.innerHTML=`<section class="panel panel-pad"><div class="panel-head"><h2>⚔️ Centro di comando tattico</h2><span class="tag highlight">Nuovo 1.6</span></div><p class="small muted">Ogni tattica cambia attacco, difesa e tempi di viaggio. Le flotte lontane dai rifornimenti perdono efficacia.</p>${known||'<p class="small muted">Crea una flotta per impostare le tattiche e assegnarle un ammiraglio.</p>'}</section>
+      <div class="bottom-grid section-gap"><section class="panel panel-pad"><div class="panel-head"><h2>🎖️ Accademia Ammiragli</h2><span class="tag">${state.admirals.length} / 25</span></div>
+      <p class="small muted">Recluta comandanti specializzati che guadagnano esperienza con missioni e pattuglie. Richiede Accademia Ammiragli L1.</p>
+      <button class="btn primary" data-recruit-admiral ${state.tech.admiralty>=1&&state.admirals.length<25&&canPay({credits:95+35*state.admirals.length,science:45})?'':'disabled'}>🎖️ Recluta · ${95+35*state.admirals.length} crediti + 45 ricerca</button>
+      <div class="group-stack" style="margin-top:10px">${admirals||'<p class="small muted">Nessun comandante reclutato.</p>'}</div></section>
+      <section class="panel panel-pad"><div class="panel-head"><h2>📦 Rete logistica</h2><span class="tag ${state.tech.logistics?'highlight':'warn'}">Raggio ${baseSupplyRange()}</span></div>
+      <p>Le flotte ricevono rifornimenti dai pianeti e dagli avamposti controllati. La distanza limita la loro forza militare e rallenta gli spostamenti.</p>
+      <div class="facts"><span class="tag">🪐 ${ownedCount()} colonie/avamposti</span><span class="tag">📡 Logistica L${state.tech.logistics}</span></div>
+      <p class="small muted">I moduli logistici delle navi e gli ammiragli specializzati estendono il raggio operativo.</p></section></div>
+      <div class="bottom-grid section-gap"><section class="panel panel-pad"><div class="panel-head"><h2>🏗️ Coda dei cantieri</h2><span class="tag">${state.shipyardQueue.length} ordini</span></div>
+      <p class="small muted">Produzione sequenziale: il costo viene pagato quando ordini la nave. Il progetto resta quello selezionato all’ordine.</p>
+      <div class="group-stack">${queue||'<div class="empty-state">Nessuna nave in costruzione.</div>'}</div></section>
+      <section class="panel panel-pad"><div class="panel-head"><h2>🧩 Progettazione navale</h2><span class="tag ${state.tech.modularHull?'highlight':'warn'}">${state.tech.modularHull?'Sbloccata':'Richiede Scafi modulari'}</span></div>
+      <p class="small muted">Scegli un progetto: arma, protezione, motore e supporto. La ricerca sblocca progressivamente i moduli.</p>
+      <div class="group-stack">${designer}</div></section></div>`;
+  }
+
+  function render(){q('#cycle').textContent=nfmt(state.cycle);q('#pause-btn').textContent=state.paused?'▶ Riprendi':'Ⅱ Pausa';q('#speed-btn').textContent=state.speed+'×';renderResources();renderMap();renderDetail();renderEmpire();renderStatus();renderObjective();renderLog();if(activeView==='research')renderTech();if(activeView==='market')renderMarket();if(activeView==='fleet'){renderFleet();renderNavalExpansion()}if(activeView==='civs')renderCivs()}
+  function setView(view){if(!['galaxy','civs','fleet','research','market','history'].includes(view))return;activeView=view;state.view=view;all('.view').forEach(n=>n.hidden=n.id!==`view-${view}`);all('.nav-btn').forEach(n=>n.classList.toggle('active',n.dataset.view===view));q('#breadcrumb-name').textContent=({galaxy:'GALASSIA',civs:'CIVILTÀ',fleet:'FLOTTE',research:'RICERCA',market:'MERCATO',history:'REGISTRO'})[view];if(view==='civs')renderCivs();if(view==='research')renderTech();if(view==='market')renderMarket();if(view==='fleet'){renderFleet();renderNavalExpansion()}if(view==='history')renderLog();save();window.scrollTo({top:0,behavior:'smooth'})}
   function pan(dx,dy){state.panX+=dx;state.panY+=dy;commit()}
   function select(x,y){state.focus=key(x,y);commit()}
   function showModal(content){modalActive=true;const el=q('#modal-root');el.innerHTML=`<div class="modal">${content}</div>`;el.hidden=false}
   function closeModal(){modalActive=false;q('#modal-root').hidden=true;q('#modal-root').innerHTML=''}
-  function help(){showModal(`<div class="big-icon">✧</div><h2>Come si gioca</h2><p>Guida la tua civiltà in una galassia generata proceduralmente. Non c'è un finale: l'obiettivo è espandersi e sopravvivere.</p><ol class="help-list"><li><b>Esplora</b> i settori illuminati con ✧ accanto alle tue colonie.</li><li><b>Colonizza</b> i pianeti scoperti usando energia, metallo e crediti.</li><li><b>Potenzia</b> gli impianti: ogni mondo produce risorse differenti a ogni ciclo.</li><li><b>Flotte</b>: costruisci navi specializzate e assegnale a esplorazione, ricerca, difesa, pattuglia o attacco. Il viaggio richiede cicli e puoi vederle muoversi sulla mappa.</li><li><b>Ricerca</b> tecnologie propedeutiche in esagoni e usa il <b>Mercato</b> per equilibrare l'economia.</li><li><b>Automazioni</b>: sblocca Autopilota per esplorazioni ricorrenti e l'Ambasciatrice per le miniere.</li><li><b>Flotte</b>: cerca e raggruppa le navi per pattuglie su rotte di più pianeti.</li><li><b>Diplomazia</b>: al primo contatto invia aiuti. Sblocca Rotte commerciali, patti, alleanze e missioni di intelligence attraverso gli esagoni di ricerca. Le guerre richiedono navi militari e offensive con tempi di viaggio.</li><li><b>Costruisci scudi</b>: gli attacchi diventano più pericolosi con l'espansione.</li><li><b>Avanza i cicli</b> manualmente oppure lascia scorrere il tempo automaticamente.</li></ol><p>La partita viene salvata nel browser. Puoi esportare un backup JSON, importarlo successivamente o iniziare da zero.</p><div class="modal-actions"><button class="btn primary full" data-modal="close">Inizia a giocare →</button><div class="btn-stack"><button class="btn ghost" style="flex:1" data-modal="backup">↓ Esporta partita</button><button class="btn ghost" style="flex:1" data-modal="import">↑ Importa partita</button><button class="btn danger" style="flex:1" data-modal="reset-prompt">Nuova partita</button></div></div>`)}
+  function help(){showModal(`<div class="big-icon">✧</div><h2>Come si gioca</h2><p>Guida la tua civiltà in una galassia generata proceduralmente. Non c'è un finale: l'obiettivo è espandersi e sopravvivere.</p><ol class="help-list"><li><b>Esplora</b> i settori illuminati con ✧ accanto alle tue colonie.</li><li><b>Colonizza</b> i pianeti scoperti usando energia, metallo e crediti.</li><li><b>Potenzia</b> gli impianti: ogni mondo produce risorse differenti a ogni ciclo.</li><li><b>Flotte</b>: costruisci navi specializzate e assegnale a esplorazione, ricerca, difesa, pattuglia o attacco. Il viaggio richiede cicli e puoi vederle muoversi sulla mappa.</li><li><b>Ricerca</b> tecnologie propedeutiche in esagoni e usa il <b>Mercato</b> per equilibrare l'economia.</li><li><b>Automazioni</b>: sblocca Autopilota per esplorazioni ricorrenti e l'Ambasciatrice per le miniere.</li><li><b>Flotte</b>: raggruppa le navi e organizza pattuglie su più pianeti.</li><li><b>Cantieri 1.6</b>: le navi richiedono cicli di costruzione. Puoi controllare la coda e annullare un ordine.</li><li><b>Scafi modulari</b>: dopo la ricerca modifica i progetti delle nuove navi scegliendo armi, protezioni, motori e moduli speciali.</li><li><b>Ammiragli e tattiche</b>: recluta comandanti e imposta assetti diversi sulle flotte dopo aver ricercato le rispettive tecnologie.</li><li><b>Logistica</b>: le flotte lontane da colonie e avamposti ricevono penalità; ricerche e moduli ne aumentano la portata.</li><li><b>Diplomazia</b>: al primo contatto invia aiuti. Sblocca Rotte commerciali, patti, alleanze e missioni di intelligence attraverso gli esagoni di ricerca. Le guerre richiedono navi militari e offensive con tempi di viaggio.</li><li><b>Costruisci scudi</b>: gli attacchi diventano più pericolosi con l'espansione.</li><li><b>Avanza i cicli</b> manualmente oppure lascia scorrere il tempo automaticamente.</li></ol><p>La partita viene salvata nel browser. Puoi esportare un backup JSON, importarlo successivamente o iniziare da zero.</p><div class="modal-actions"><button class="btn primary full" data-modal="close">Inizia a giocare →</button><div class="btn-stack"><button class="btn ghost" style="flex:1" data-modal="backup">↓ Esporta partita</button><button class="btn ghost" style="flex:1" data-modal="import">↑ Importa partita</button><button class="btn danger" style="flex:1" data-modal="reset-prompt">Nuova partita</button></div></div>`)}
   function confirmReset(){showModal(`<div class="big-icon">⚠️</div><h2>Ricominciare da zero?</h2><p>Il salvataggio corrente sarà sostituito da una nuova galassia. Per conservarlo, esporta prima un backup dal menu di aiuto.</p><div class="modal-actions"><button class="btn danger full" data-modal="reset-confirm">Sì, crea una nuova galassia</button><button class="btn ghost full" data-modal="close">Annulla</button></div>`)}
   function reset(){state=initialState();initializeCivs();ui.selectedShips=[];ui.routeDraft=[];ui.fleetName='';ui.routeQuery='';ui.openGroups=[];activeView='galaxy';closeModal();setView('galaxy');restartTimer();commit();alertToast('Nuova galassia creata!')}
   function backup(){const json=JSON.stringify(state,null,2);const blob=new Blob([json],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=`frontiera-infinita-save-schema${SAVE_SCHEMA}-ciclo-${state.cycle}.json`;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);alertToast('Salvataggio esportato.')}
@@ -890,6 +1165,11 @@
     if(target.dataset.autoMining!==undefined){setAutoMining();return}
     if(target.dataset.stopAuto){stopAuto(target.dataset.stopAuto);return}
     if(target.dataset.build){buildShip(target.dataset.build);return}
+    if(target.dataset.design){const [type,slot,id]=target.dataset.design.split('|');updateBlueprint(type,slot,id);return}
+    if(target.dataset.cancelBuild){cancelBuild(Number(target.dataset.cancelBuild));return}
+    if(target.dataset.recruitAdmiral!==undefined){recruitAdmiral();return}
+    if(target.dataset.assignAdmiral){const [fleet,admiral]=target.dataset.assignAdmiral.split('|').map(Number);assignAdmiral(fleet,admiral);return}
+    if(target.dataset.cycleStance){cycleStance(Number(target.dataset.cycleStance));return}
     if(target.dataset.recall){recallShip(Number(target.dataset.recall));return}
     if(target.dataset.goto){state.focus=target.dataset.goto;const [x,y]=coords(state.focus);state.panX=x;state.panY=y;setView('galaxy');commit();return}
     if(target.dataset.diplo){const [id,action]=target.dataset.diplo.split('|');diplomaticAction(Number(id),action);return}
@@ -929,6 +1209,7 @@
     if(id==='civ-filter'){ui.civFilter=el.value;renderCivs()}
     if(id==='chronicle-filter'){state.chronicleFilter=el.value;save();renderCivs()}
   });
+  document.addEventListener('toggle',event=>{const el=event.target;if(el?.matches?.('[data-naval-group]')){ui.navalOpenGroups=ui.navalOpenGroups||[];const key=el.dataset.navalGroup;ui.navalOpenGroups=el.open?[...new Set([...ui.navalOpenGroups,key])]:ui.navalOpenGroups.filter(k=>k!==key)}},true);
   window.addEventListener('resize',()=>{if(activeView==='research')paintTechLinks()});
   q('#import-file').addEventListener('change' ,e=>importSave(e.target.files?.[0]));
   document.addEventListener('keydown',e=>{if(e.key==='Escape'&&modalActive){closeModal();return}if(modalActive||/INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName))return;if(activeView==='galaxy'&&['ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.key)){e.preventDefault();const shift={ArrowUp:[0,-3],ArrowDown:[0,3],ArrowLeft:[-4,0],ArrowRight:[4,0]}[e.key];pan(...shift)}});
